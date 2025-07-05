@@ -1,0 +1,111 @@
+/* slick item spacing */
+.custom-slick-carousel .slick-slide {
+    margin: 0px 10px 30px 10px;
+}
+.custom-slick-carousel .slick-list {
+    margin: 0px 30px 0px 30px;
+}
+
+/* slick button */
+.custom-slick-carousel .slick-next,
+.custom-slick-carousel .slick-prev {
+    margin: -30px 0px 0px 0px;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    z-index: 9;
+    transition: all 0.4s;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+.custom-slick-carousel .slick-next:hover,
+.custom-slick-carousel .slick-prev:hover {
+    background-color: #f5f5f5;
+}
+.custom-slick-carousel .slick-next {
+    right: 0px;
+}
+.custom-slick-carousel .slick-prev {
+    left: 0px;
+}
+[dir="rtl"] .custom-slick-carousel .slick-next {
+    right: auto;
+    left: 0px;
+}
+[dir="rtl"] .custom-slick-carousel .slick-prev {
+    left: auto;
+    right: 0px;
+}
+.custom-slick-carousel .slick-next:before,
+.custom-slick-carousel .slick-prev:before {
+    content: "";
+    font-family: "Material Design Icons";
+    font-size: 26px;
+    color: #343a40;
+    transition: all 0.4s;
+}
+.custom-slick-carousel .slick-next:before {
+    content: "\F0142";
+}
+.custom-slick-carousel .slick-prev:before {
+    content: "\F0141";
+}
+[dir="rtl"] .custom-slick-carousel .slick-next:before {
+    content: "\F0141";
+}
+[dir="rtl"] .custom-slick-carousel .slick-prev:before {
+    content: "\F0142";
+}
+
+/* show / hover */
+.custom-slick-carousel.hover-slick-btn .slick-next,
+.custom-slick-carousel.hover-slick-btn .slick-prev {
+    opacity: 0;
+    transition: all 0.4s;
+}
+.custom-slick-carousel.hover-slick-btn:hover .slick-next,
+.custom-slick-carousel.hover-slick-btn:hover .slick-prev {
+    opacity: 1;
+}
+
+/* custom dots */
+.slick-dotted.slick-slider{
+    margin-bottom: 60px;
+}
+.slick-dots{
+    bottom: -30px;
+}
+.slick-dots li {
+    margin: 0px 5px 0px 5px;
+    transition: all 0.4s;
+}
+.slick-dots li button{
+    padding: 0px 0px 0px 0px;
+}
+.slick-dots li button::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    opacity: 0;
+    border-radius: 100px;
+    border: 6px solid #fff;
+    outline: 3px solid #343a40;
+    background-color: #343a40;
+    transition: all 0.4s;
+}
+.slick-dots li button:after {
+    content: "";
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 100px;
+    background-color: #343a40;
+    transition: all 0.4s;
+}
+.slick-dots li.slick-active button:before {
+    opacity: 1;
+}
+.slick-dots li.slick-active button:after {
+    background-color: transparent;
+}

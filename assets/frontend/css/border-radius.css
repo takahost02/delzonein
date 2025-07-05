@@ -1,0 +1,10 @@
+.theme-border-radius,
+.custom-slick-carousel .slick-next,
+.custom-slick-carousel .slick-prev,
+.datepicker.dropdown-menu,
+.dropdown .dropdown-item,
+.datepicker .cw,
+.datepicker td,
+.datepicker th{
+    border-radius: 5px;
+}

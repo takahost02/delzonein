@@ -1,0 +1,12 @@
+{
+    "label": "Loans",
+    "menu": "Manage",
+    "order": "92",
+    "icon": "fa-money-check",
+    "user_levels": [
+        "Admin"
+    ],
+    "permissions": [],
+    "model_namespace": "\\Loans\\Common\\Model",
+    "manager": "\\Loans\\Admin\\Api\\LoansAdminManager"
+}

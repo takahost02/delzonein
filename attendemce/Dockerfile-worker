@@ -1,0 +1,43 @@
+FROM alpine:3.14
+LABEL Maintainer="Thilina, Pituwala <thilina@icehrm.com>" \
+      Description="IceHrm Docker Container with Nginx & PHP-FPM based on Alpine Linux."
+
+ARG EXE_ENV
+
+
+# Install packages
+RUN apk --no-cache add php php-fpm php-opcache php-mysqli php-json php-openssl php-curl \
+    php-zlib php-xml php-phar php-intl php-dom php-xmlreader php-ctype php-session \
+    php-mbstring php-gd nginx supervisor curl
+
+# Configure supervisord
+COPY docker/worker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# persistent / runtime deps
+
+RUN apk add --no-cache \
+        wkhtmltopdf \
+        xvfb \
+        xvfb-run \
+        ttf-dejavu ttf-droid ttf-freefont ttf-liberation \
+    ;
+
+RUN ln -s /usr/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf;
+RUN chmod +x /usr/local/bin/wkhtmltopdf;
+
+# Setup document root
+RUN mkdir -p /var/www/html
+
+# Add application
+WORKDIR /var/www/html
+COPY ./app /var/www/html/app/
+COPY ./core /var/www/html/core/
+COPY ./extensions /var/www/html/extensions/
+COPY ./web /var/www/html/web/
+COPY ./index.php /var/www/html/index.php
+COPY ./docker/$EXE_ENV/config/config.php /var/www/html/app/config.php
+
+
+COPY ./docker/worker/config/ice-cron /etc/crontabs/root
+
+CMD /usr/sbin/crond -f -l 8

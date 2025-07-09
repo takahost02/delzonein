@@ -65,7 +65,7 @@ class Booking extends CI_Controller {
             'c_address' => $this->input->post('address'),
         ];
         if (!empty($password)) {
-            $updateData['c_pwd'] = md5($password); 
+            $updateData['c_pwd'] = $password; 
         }
 		$this->db->where('c_id',$this->session->userdata['session_data_fr']['c_id']);
 		$response = $this->db->update('customers',$updateData);
@@ -93,7 +93,7 @@ class Booking extends CI_Controller {
 				$inputData = $this->input->post(NULL, TRUE); 
 				$exist = $this->db->get_where('customers', ['c_email' => $inputData['c_email']])->row_array();
 				if (!$exist) {
-					$inputData['c_pwd'] = md5($inputData['c_pwd']);
+					$inputData['c_pwd'] = $inputData['c_pwd'];
 					$inputData['c_created_date'] = date('Y-m-d H:i:s');
 					$inputData['c_isactive'] = 1;
 					$response = $this->customer_model->add_customer($inputData);
@@ -118,7 +118,7 @@ class Booking extends CI_Controller {
 		$data['content'] = $this->content;
 		if(isset($_POST['username'])) {
 			$this->db->where('c_email', $this->input->post('username'));
-			$this->db->where('c_pwd', md5($this->input->post('password')));
+			$this->db->where('c_pwd', $this->input->post('password'));
 			$query = $this->db->get("customers");
 			if ($query->num_rows() >= 1) {
 				$result = $query->row_array();

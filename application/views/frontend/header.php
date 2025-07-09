@@ -91,20 +91,25 @@
 			<div class="navbar-auth">
 				<div class="list-item list-item-inline-flex list-item-align-items-center">
 					<li class="list-item-li">
-						<a href="<?= base_url(); ?>booking/myaccount" class="theme-btn theme-border-radius theme-btn-primary">
-							<?php
+						<?php
 							$current_url = current_url();
 							$account_url = base_url('booking/myaccount');
 
-							if ($current_url === $account_url) {
-								echo 'Book Trip';
-							} elseif (isset($this->session->userdata['session_data_fr']['c_name'])) {
-								echo 'Profile, ' . ucfirst($this->session->userdata['session_data_fr']['c_name']);
-							} else {
-								echo 'Sign In';
-							}
-							?>
-						</a>
+							if ($current_url === $account_url): ?>
+								<a href="<?= base_url('home'); ?>" class="theme-btn theme-border-radius theme-btn-primary">
+									Book Trip
+								</a>
+							<?php else: ?>
+								<a href="<?= base_url('booking/myaccount'); ?>" class="theme-btn theme-border-radius theme-btn-primary">
+									<?php
+									if (isset($this->session->userdata['session_data_fr']['c_name'])) {
+										echo 'Profile, ' . ucfirst($this->session->userdata['session_data_fr']['c_name']);
+									} else {
+										echo 'Sign In';
+									}
+									?>
+								</a>
+							<?php endif; ?>
 					</li>
 				</div>
 			</div>

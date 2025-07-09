@@ -1,0 +1,4 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/delzone/public_html/
+    - /bin/rsync -av --exclude='.git' ./ $DEPLOYPATH

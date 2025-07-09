@@ -96,7 +96,7 @@
 							$account_url = base_url('booking/myaccount');
 
 							if ($current_url === $account_url): ?>
-								<a href="<?= base_url('home'); ?>" class="theme-btn theme-border-radius theme-btn-primary">
+								<a href="<?= base_url(' '); ?>" class="theme-btn theme-border-radius theme-btn-primary">
 									Book Trip
 								</a>
 							<?php else: ?>

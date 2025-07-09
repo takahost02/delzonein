@@ -1,0 +1,12 @@
+{
+    "label": "Field Names",
+    "menu": "System",
+    "order": "81",
+    "icon": "fa-ruler-horizontal",
+    "user_levels": [
+        "Admin"
+    ],
+    "permissions": [],
+    "model_namespace": "\\FieldNames\\Common\\Model",
+    "manager": "\\FieldNames\\Admin\\Api\\FieldNamesAdminManager"
+}

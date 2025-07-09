@@ -131,7 +131,7 @@ class Booking extends CI_Controller {
 				} else {
 					$this->session->set_flashdata('successmessage', 'You got logged in successfully..');
 					$this->session->set_userdata('session_data_fr', $session_data);
-					redirect('booking/myaccount');
+					redirect(' ');
 				}
 			} else {
 				$this->session->set_flashdata('warningmessage', 'Invalid email or Password !');

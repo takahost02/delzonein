@@ -1,0 +1,46 @@
+/**=========================
+    START MIN
+=========================**/
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+@media (min-width: 991px) {
+}
+/**=========================
+    END MIN
+=========================**/
+
+/**=========================
+    START MAX
+=========================**/
+@media (max-width: 1200px) {
+    .container {
+        max-width: 100%;
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+}
+@media (max-width: 1140px) {
+}
+@media (max-width: 991px) {
+    .top-header-right,
+    .sub-footer-right{
+        text-align: left;
+    }
+}
+@media (max-width: 768px) {
+    .list-item-block-md{
+        display: block;
+    }
+}
+@media (max-width: 700px) {
+}
+@media (max-width: 576px) {
+}
+@media (max-width: 450px) {
+}
+/**=========================
+    END MAX
+=========================**/

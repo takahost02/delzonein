@@ -103,7 +103,7 @@
 								<a href="<?= base_url('booking/myaccount'); ?>" class="theme-btn theme-border-radius theme-btn-primary">
 									<?php
 									if (isset($this->session->userdata['session_data_fr']['c_name'])) {
-										echo 'Profile, ' . ucfirst($this->session->userdata['session_data_fr']['c_name']);
+										echo 'Profile';
 									} else {
 										echo 'Sign In';
 									}

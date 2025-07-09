@@ -1,0 +1,2 @@
+v_registration_no,v_name,v_model,v_chassis_no,v_engine_no,v_manufactured_by,v_type,v_color,v_mileageperlitre,v_is_active,v_group,v_reg_exp_date,v_api_url,v_api_username,v_api_password,v_traccar_id,v_file,v_file1,v_created_by,v_created_date
+dsd,a a A,aa,CH123456789,EN123456789,Toyota,Car,Sedan,15,1,1,31-12-2024,,,,,,,,26-07-2024 12.00

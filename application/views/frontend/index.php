@@ -13,13 +13,13 @@ $data = sitedata();
 
                                     <?php $successMessage = $this->session->flashdata('successmessage');  
                                             $warningmessage = $this->session->flashdata('warningmessage');                    
-                                                if (isset($successMessage)) { echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
+                                                if (!empty($successMessage)) { echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
                                         <div class="alert alert-success p-10px pl-15px pr-15px theme-border-radius text-center">
                                             <button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>
                                             '. $successMessage.'
                                         </div>
                                     </div>'; } 
-                                                if (isset($warningmessage)) { echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
+                                                if (!empty($warningmessage)) { echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
                                         <div class="alert alert-danger p-10px pl-15px pr-15px theme-border-radius text-center">
                                             <button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>
                                             '. $warningmessage.'

@@ -11,30 +11,37 @@ $data = sitedata();
 								<div class="col-item">
 									<div class="p-30px theme-bg-white theme-border-radius">
 
-                                    <?php $successMessage = $this->session->flashdata('successmessage');  
-                                            $warningmessage = $this->session->flashdata('warningmessage');                    
-                                                if (!empty($successMessage)) { echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
-                                        <div class="alert alert-success p-10px pl-15px pr-15px theme-border-radius text-center">
-                                            <button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>
-                                            '. $successMessage.'
-                                        </div>
-                                    </div>'; } 
-                                                if (!empty($warningmessage)) { echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
-                                        <div class="alert alert-danger p-10px pl-15px pr-15px theme-border-radius text-center">
-                                            <button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>
-                                            '. $warningmessage.'
-                                        </div>
-                                    </div>'; }   
-											 $debugResponse = $this->session->flashdata('debug_response');  
-												if (!empty($debugResponse)) {
-													echo '<div class="col-md-12 d-flex justify-content-center">
-														<div class="alert alert-info p-10px pl-15px pr-15px theme-border-radius text-center">
-															<button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>
-															' . $debugResponse . '
-														</div>
-													</div>';
-												}
-                                    ?>
+                                    <?php
+										$successMessage = $this->session->flashdata('successmessage');
+										$warningmessage = $this->session->flashdata('warningmessage');
+										$debugResponse  = $this->session->flashdata('debug_response');
+
+										if (!empty($successMessage)) {
+											echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
+												<div class="alert alert-success p-10px pl-15px pr-15px theme-border-radius text-center">
+													<button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>'
+													. $successMessage .
+												'</div>
+											</div>';
+										} elseif (!empty($warningmessage)) {
+											echo '<div id="alertmessage" class="col-md-12 d-flex justify-content-center">
+												<div class="alert alert-danger p-10px pl-15px pr-15px theme-border-radius text-center">
+													<button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>'
+													. $warningmessage .
+												'</div>
+											</div>';
+										}
+
+										if (!empty($debugResponse)) {
+											echo '<div class="col-md-12 d-flex justify-content-center">
+												<div class="alert alert-info p-10px pl-15px pr-15px theme-border-radius text-center">
+													<button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>'
+													. $debugResponse .
+												'</div>
+											</div>';
+										}
+										?>
+
 
 									
 

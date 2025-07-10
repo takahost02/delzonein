@@ -24,8 +24,19 @@ $data = sitedata();
                                             <button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>
                                             '. $warningmessage.'
                                         </div>
-                                    </div>'; }    
+                                    </div>'; }   
+											 $debugResponse = $this->session->flashdata('debug_response');  
+												if (!empty($debugResponse)) {
+													echo '<div class="col-md-12 d-flex justify-content-center">
+														<div class="alert alert-info p-10px pl-15px pr-15px theme-border-radius text-center">
+															<button type="button" class="close" data-bs-dismiss="alert" aria-hidden="true">×</button>
+															' . $debugResponse . '
+														</div>
+													</div>';
+												}
                                     ?>
+
+									
 
 
 										<h6 class="m-0px mb-15px">What is your vehicle type?</h6>

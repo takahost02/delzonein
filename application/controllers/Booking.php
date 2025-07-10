@@ -169,6 +169,8 @@ class Booking extends CI_Controller {
 			} else {
 				$response = $this->trips_model->add_trips($this->input->post());
 				$_POST['t_id'] = $response;
+				log_message('debug', 'Booking Response: ' . print_r($response, true));
+				$this->session->set_flashdata('debug_response', 'Raw Response: ' . print_r($response, true));
 				if(isset($bookingemail)) {
 					sendtripemail($this->input->post());
 				}

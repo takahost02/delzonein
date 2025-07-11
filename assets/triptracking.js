@@ -1,20 +1,20 @@
-var map = infoWindow = latitude = null;
-var markersArray = [];
+var map, infoWindow, latitude = null;
+  var markersArray = [];
 
-function initMap() {
-  if ($('#t_trip_status').val() != 'ongoing') return;
+  function initMap() {
+    if ($('#t_trip_status').val() != 'ongoing') return;
 
-  map = new google.maps.Map(document.getElementById("map_canvas"), {
-    center: new google.maps.LatLng(52.696361078274485, -111.4453125),
-    zoom: 3,
-    mapTypeId: 'roadmap',
-    gestureHandling: 'greedy'
-  });
+    map = new google.maps.Map(document.getElementById("map_canvas"), {
+      center: new google.maps.LatLng(52.696361078274485, -111.4453125),
+      zoom: 3,
+      mapTypeId: 'roadmap',
+      gestureHandling: 'greedy'
+    });
 
-  infoWindow = new google.maps.InfoWindow;
-  var v_id = $('#v_id').val();
-  livetracking(v_id);
-}
+    infoWindow = new google.maps.InfoWindow;
+    var v_id = $('#v_id').val();
+    livetracking(v_id);
+  }
 
 
 $(document).ready(function () {

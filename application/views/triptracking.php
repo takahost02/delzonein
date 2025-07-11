@@ -54,7 +54,7 @@
   src="https://maps.googleapis.com/maps/api/js?key=<?= $data['s_googel_api_key']; ?>&callback=initMap&libraries=places,drawing&v=weekly"
 
 ></script>
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
 <script id="group"  src="<?php echo base_url(); ?>assets/triptracking.js"></script>
   <script src="<?php echo base_url(); ?>assets/fontawesome-markers.min.js"></script>
 

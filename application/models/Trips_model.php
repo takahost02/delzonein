@@ -75,28 +75,49 @@ class Trips_model extends CI_Model{
 	}
 	
 	public function getall_trips($trackingcode=false) { 
-		$tripdata = $this->db
-			->select('
-				trips.*,
-				customers.c_name, customers.c_mobile, customers.c_email, 
-				vehicles.v_registration_no, vehicles.v_model, vehicle_group.gr_name,
-				drivers.d_name, drivers.d_mobile,
-				vehicle_route.vr_name
-			')
-			->from('trips')
-			->order_by('trips.t_id', 'desc')
-			->join('customers', 'customers.c_id = trips.t_customer_id', 'left')
-			->join('vehicles', 'vehicles.v_id = trips.t_vechicle', 'left')
-			->join('vehicle_group', 'vehicles.v_group = vehicle_group.gr_id', 'left')
-			->join('drivers', 'drivers.d_id = trips.t_driver', 'left')
-			->join('vehicle_route', 'vehicle_route.vr_id = trips.t_route', 'left');
+	$tripdata = $this->db
+		->select('
+			trips.*,
+			customers.c_name, customers.c_mobile, customers.c_email, 
+			vehicles.v_registration_no, vehicles.v_model, vehicle_group.gr_name,
+			drivers.d_name, drivers.d_mobile,
+			vehicle_route.vr_name
+		')
+		->from('trips')
+		->order_by('trips.t_id', 'desc')
+		->join('customers', 'customers.c_id = trips.t_customer_id', 'left')
+		->join('vehicles', 'vehicles.v_id = trips.t_vechicle', 'left')
+		->join('vehicle_group', 'vehicles.v_group = vehicle_group.gr_id', 'left')
+		->join('drivers', 'drivers.d_id = trips.t_driver', 'left')
+		->join('vehicle_route', 'vehicle_route.vr_id = trips.t_route', 'left');
+
 		if (!empty($trackingcode)) {
 			$this->db->where('trips.t_trackingcode', $trackingcode);
 		}
+
 		$query = $this->db->get();
 		$tripdata = $query->result_array();
+
+		if (!empty($tripdata)) {
+			foreach ($tripdata as $key => $trip) {
+				// Add object-style t_driver_details
+				$tripdata[$key]['t_driver_details'] = (object)[
+					'd_name'   => $trip['d_name'] ?? null,
+					'd_mobile' => $trip['d_mobile'] ?? null,
+				];
+
+				// Add object-style t_vechicle_details
+				$tripdata[$key]['t_vechicle_details'] = (object)[
+					'v_name'            => $trip['v_model'] ?? null, // Use 'v_model' or another field as vehicle name
+					'v_registration_no' => $trip['v_registration_no'] ?? null,
+					'gr_name'           => $trip['gr_name'] ?? null,
+				];
+			}
+		}
+
 		return !empty($tripdata) ? $tripdata : false;
 	}
+
 	public function getaddress($lat,$lng)
 	{
 	 $google_api_key = $this->config->item('google_api_key'); 

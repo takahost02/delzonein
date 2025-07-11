@@ -17,7 +17,21 @@ class Emailsms_model extends CI_Model{
            $mail->Password = $emailconfig[0]['smtp_pwd'];
            $mail->SMTPSecure = $emailconfig[0]['smtp_issecure'];
            $mail->Port = $emailconfig[0]['smtp_port'];
-           $mail->setFrom($emailconfig[0]['smtp_emailfrom']);
+           $fromEmail = trim($emailconfig[0]['smtp_emailfrom']);
+           $replyToEmail = trim($emailconfig[0]['smtp_replyto']);
+           $fromName = $data['s_companyname'] ?? 'No-Reply';
+
+            if (!filter_var($fromEmail, FILTER_VALIDATE_EMAIL)) {
+                return 'Invalid From email address configured: ' . $fromEmail;
+            }
+
+            if (!filter_var($replyToEmail, FILTER_VALIDATE_EMAIL)) {
+                $replyToEmail = $fromEmail; // fallback
+            }
+
+            $mail->setFrom($fromEmail, $fromName);
+            $mail->addReplyTo($replyToEmail, $fromName);
+
            $mail->addReplyTo($emailconfig[0]['smtp_replyto']);
            $mail->addAddress($email); 
            $mail->Subject = $subject;

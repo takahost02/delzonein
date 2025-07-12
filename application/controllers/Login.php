@@ -37,31 +37,42 @@ class Login extends CI_Controller {
 		{ 
 		$this->load->model('login_model');
 		$result = $this->login_model->check_login($this->input->post());
-			if($result != FALSE)
-			{
-				$session_data = array('u_id' => $result['u_id'],
-									  'name' => $result['u_name'],
-									  'email' => $result['u_username'],
-									  'u_isactive' =>$result['u_isactive']); 
-				$userroles = $this->login_model->userroles($result['u_id']);
-				if($result['u_isactive']==0) {
-					$this->session->set_flashdata('warningmessage', 'User not active.Please contact admin');
+			if ($result != FALSE) {
+				$user_type = $result['user_type'];
+				$is_active = $result['u_isactive'] ?? 0;
+
+				if ($is_active == 0) {
+					$this->session->set_flashdata('warningmessage', 'User not active. Please contact admin');
 					redirect('login');
-				} else if(empty($userroles)) {
-					$this->session->set_flashdata('warningmessage', 'User role is not defined.Please contact admin');
-					redirect('login');
-				} else {
-					$this->session->set_userdata('userroles', $userroles);
 				}
-				$this->db->set('u_lastlogin', 'NOW()', false)->where('u_id', $result['u_id'])->update('login');
+
+				// Set session common data
+				$session_data = array(
+					'u_id'       => $result['u_id'] ?? $result['d_id'] ?? $result['vn_id'],
+					'name'       => $result['u_name'] ?? $result['d_name'] ?? $result['vn_name'],
+					'email'      => $result['u_username'] ?? $result['d_email'] ?? $result['vn_email'],
+					'user_type'  => $user_type,
+					'u_isactive' => $is_active
+				);
+
+				// Fetch roles only for admin
+				if ($user_type === 'admin') {
+					$userroles = $this->login_model->userroles($result['u_id']);
+					if (empty($userroles)) {
+						$this->session->set_flashdata('warningmessage', 'User role is not defined. Please contact admin');
+						redirect('login');
+					}
+					$this->session->set_userdata('userroles', $userroles);
+					$this->db->set('u_lastlogin', 'NOW()', false)->where('u_id', $result['u_id'])->update('login');
+				}
+
+				// Store session data
 				$this->session->set_userdata('session_data', $session_data);
+
+				// Redirect to dashboard or respective user panel
 				redirect('dashboard');
 			}
-			else 
-			{
-			$this->session->set_flashdata('warningmessage', 'Invalid email or Password !');
-			redirect('login');
-			}
+
 		}
 	}
 	//To logout session from browser

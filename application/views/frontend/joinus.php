@@ -21,7 +21,7 @@ $data = sitedata();
                         }
                         ?>
 
-                        <form method="post" action="<?= base_url('join/submit'); ?>" class="mt-3">
+                        <form method="post" action="<?= base_url('booking/submit'); ?>" class="mt-3">
                             <div class="row">
                                 <div class="col-md-6 mb-15px">
                                     <label class="mb-5px">Full Name</label>

@@ -98,7 +98,34 @@ class Booking extends CI_Controller {
 			redirect('booking/login');
 		}
 	}
-	
+
+	public function submit()
+	{
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_rules('name', 'Name', 'required');
+		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+		$this->form_validation->set_rules('phone', 'Phone', 'required');
+		$this->form_validation->set_rules('role', 'Role', 'required');
+		$this->form_validation->set_rules('message', 'Message', 'required');
+
+		if ($this->form_validation->run()) {
+			$this->db->insert('join_requests', [
+				'name' => $this->input->post('name'),
+				'email' => $this->input->post('email'),
+				'phone' => $this->input->post('phone'),
+				'role' => $this->input->post('role'),
+				'message' => $this->input->post('message')
+			]);
+			$this->session->set_flashdata('successmessage', 'Thanks! Your application has been received.');
+		} else {
+			$this->session->set_flashdata('warningmessage', validation_errors());
+		}
+
+		redirect(base_url('join-us'));
+	}
+
+
 	public function updateprofile()
 	{
 		$password = $this->input->post('user_password');

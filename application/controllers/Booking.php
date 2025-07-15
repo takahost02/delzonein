@@ -30,6 +30,57 @@ class Booking extends CI_Controller {
 		$data['group'] = $query ? $query->result_array() : [];
 		$this->load->view('frontend/index',$data);
 	}
+
+	public function aboutus()
+	{
+		$this->load->model('trips_model');
+		$data['content'] = $this->content;
+		$data['vechiclelist'] = $this->trips_model->getall_vechicle();
+		$query = $this->db->select('*')->from('vehicle_group')->where('gr_visibletobooking', 1)->where('gr_image !=', '')->get();
+		$data['group'] = $query ? $query->result_array() : [];
+		$this->load->view('frontend/aboutus',$data);
+	}
+
+	public function network()
+	{
+		$this->load->model('trips_model');
+		$data['content'] = $this->content;
+		$data['vechiclelist'] = $this->trips_model->getall_vechicle();
+		$query = $this->db->select('*')->from('vehicle_group')->where('gr_visibletobooking', 1)->where('gr_image !=', '')->get();
+		$data['group'] = $query ? $query->result_array() : [];
+		$this->load->view('frontend/network',$data);
+	}
+
+	public function services()
+	{
+		$this->load->model('trips_model');
+		$data['content'] = $this->content;
+		$data['vechiclelist'] = $this->trips_model->getall_vechicle();
+		$query = $this->db->select('*')->from('vehicle_group')->where('gr_visibletobooking', 1)->where('gr_image !=', '')->get();
+		$data['group'] = $query ? $query->result_array() : [];
+		$this->load->view('frontend/services',$data);
+	}
+
+	public function contactus()
+	{
+		$this->load->model('trips_model');
+		$data['content'] = $this->content;
+		$data['vechiclelist'] = $this->trips_model->getall_vechicle();
+		$query = $this->db->select('*')->from('vehicle_group')->where('gr_visibletobooking', 1)->where('gr_image !=', '')->get();
+		$data['group'] = $query ? $query->result_array() : [];
+		$this->load->view('frontend/contactus',$data);
+	}
+
+	public function joinus()
+	{
+		$this->load->model('trips_model');
+		$data['content'] = $this->content;
+		$data['vechiclelist'] = $this->trips_model->getall_vechicle();
+		$query = $this->db->select('*')->from('vehicle_group')->where('gr_visibletobooking', 1)->where('gr_image !=', '')->get();
+		$data['group'] = $query ? $query->result_array() : [];
+		$this->load->view('frontend/joinus',$data);
+	}
+
 	public function myaccount()
 	{
 		$data['content'] = $this->content;
@@ -47,6 +98,7 @@ class Booking extends CI_Controller {
 			redirect('booking/login');
 		}
 	}
+	
 	public function updateprofile()
 	{
 		$password = $this->input->post('user_password');

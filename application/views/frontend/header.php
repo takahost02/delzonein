@@ -103,19 +103,19 @@
                     <a class="nav-link" href="<?= base_url() ?>">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('about-us') ?>">About Us</a>
+                    <a class="nav-link" href="<?= base_url('booking/aboutus') ?>">About Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('network') ?>">Network</a>
+                    <a class="nav-link" href="<?= base_url('booking/network') ?>">Network</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('services') ?>">Service</a>
+                    <a class="nav-link" href="<?= base_url('booking/services') ?>">Service</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('contact-us') ?>">Contact Us</a>
+                    <a class="nav-link" href="<?= base_url('booking/contactus') ?>">Contact Us</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?= base_url('join-us') ?>">Join Us</a>
+                    <a class="nav-link" href="<?= base_url('booking/joinus') ?>">Join Us</a>
                 </li>
             </ul>
 

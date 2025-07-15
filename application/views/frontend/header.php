@@ -83,36 +83,60 @@
 	</div>
 
 	<!-- header -->
-<nav class="navbar navbar-expand-lg p-0px">
-		<div class="container">
-			<a href="<?= base_url() ?>">
-				<img src="<?= base_url().'assets/uploads/'.$data['s_logo']; ?>" class="w-180px" alt="Logo">
-			</a>
-			<div class="navbar-auth">
-				<div class="list-item list-item-inline-flex list-item-align-items-center">
-					<li class="list-item-li">
-						<?php
-							$current_url = current_url();
-							$account_url = base_url('booking/myaccount');
+	<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <!-- Logo -->
+        <a class="navbar-brand" href="<?= base_url() ?>">
+            <img src="<?= base_url().'assets/uploads/'.$data['s_logo']; ?>" class="w-180px" alt="Logo">
+        </a>
 
-							if ($current_url === $account_url): ?>
-								<a href="<?= base_url(' '); ?>" class="theme-btn theme-border-radius theme-btn-primary">
-									Book Trip
-								</a>
-							<?php else: ?>
-								<a href="<?= base_url('booking/myaccount'); ?>" class="theme-btn theme-border-radius theme-btn-primary">
-									<?php
-									if (isset($this->session->userdata['session_data_fr']['c_name'])) {
-										echo 'Profile';
-									} else {
-										echo 'Sign In';
-									}
-									?>
-								</a>
-							<?php endif; ?>
-					</li>
-				</div>
-			</div>
-		</div>
-	</nav>
+        <!-- Toggle button for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar links -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url() ?>">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('about-us') ?>">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('network') ?>">Network</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('services') ?>">Service</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('contact-us') ?>">Contact Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('join-us') ?>">Join Us</a>
+                </li>
+            </ul>
+
+            <!-- Auth Button -->
+            <div class="d-flex ms-lg-3 mt-3 mt-lg-0">
+                <?php
+                    $current_url = current_url();
+                    $account_url = base_url('booking/myaccount');
+
+                    if ($current_url === $account_url): ?>
+                        <a href="<?= base_url(); ?>" class="btn btn-primary theme-border-radius">
+                            Book Trip
+                        </a>
+                    <?php else: ?>
+                        <a href="<?= base_url('booking/myaccount'); ?>" class="btn btn-primary theme-border-radius">
+                            <?= isset($this->session->userdata['session_data_fr']['c_name']) ? 'Profile' : 'Sign In'; ?>
+                        </a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</nav>
+
 	<!-- header -->

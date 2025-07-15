@@ -40,8 +40,10 @@ $data = sitedata();
                                     <select name="role" class="form-control theme-border-radius" required>
                                         <option value="" disabled selected>Select Role</option>
                                         <option value="driver">Driver</option>
-                                        <option value="fleet_owner">Fleet Owner</option>
-                                        <option value="partner">Partner</option>
+                                        <option value="vehicle_owner">Vehicle Owner</option>
+                                        <option value="lm_partner">LM Partner</option>
+										<option value="frenchise">Frenchise</option>
+										<option value="delivery_associate">Delivery Associate</option>
                                     </select>
                                 </div>
                                 <div class="col-12 mb-15px">

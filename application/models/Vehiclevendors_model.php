@@ -46,9 +46,29 @@ class Vehiclevendors_model extends CI_Model
         return $this->db->select('*')->from('vehicle_vendors')->where('vn_id', $vn_id)->get()->result_array();
     }
 
-    public function edit_vehiclevendor($data)
+    public function edit_vehiclevendor()
     {
-        $this->db->where('vn_id', $data['vn_id']);
-        return $this->db->update('vehicle_vendors', $data);
+        if (!empty($_FILES)) {
+            $config['upload_path'] = 'assets/uploads/';
+            $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
+            $this->load->library('upload', $config);
+            if (!empty($_FILES['file']['name'][0])) {
+                $uploadData = '';
+                $this->upload->initialize($config);
+                $_FILES['file']['name']     = $_FILES['file']['name'];
+                $_FILES['file']['type']     = $_FILES['file']['type'];
+                $_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name'];
+                $_FILES['file']['error']     = $_FILES['file']['error'];
+                $_FILES['file']['size']     = $_FILES['file']['size'];
+                if ($this->upload->do_upload('file')) {
+                    $uploadData = $this->upload->data();
+                    $_POST['vn_file'] = $uploadData['file_name'];
+                }
+            }
+        }
+
+        $_POST['vn_doj'] = reformatDate($_POST['vn_doj']);
+        $this->db->where('vn_id', $this->input->post('vn_id'));
+        return $this->db->update('vehicle_vendors', $this->input->post());
     }
 }

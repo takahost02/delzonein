@@ -54,13 +54,57 @@ class Vehiclevendors_model extends CI_Model
         return $this->db->select('*')->from('vehicle_vendors')->where('vn_id', $vn_id)->get()->result_array();
     }
 
-    public function edit_vehiclevendor($data)
+    public function edit_vehiclevendor()
     {
-        if (isset($data['vn_id'])) {
-            $this->db->where('vn_id', $data['vn_id']);
-            unset($data['vn_id']); // prevent updating the ID field
-            return $this->db->update('vehicle_vendors', $data);
+        if (!empty($_FILES)) {
+            $config['upload_path'] = 'assets/uploads/';
+            $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
+            $this->load->library('upload', $config);
+
+            // Handle file upload 1 (file)
+            if (!empty($_FILES['file']['name'][0])) {
+                $this->upload->initialize($config);
+                $_FILES['file']['name']     = $_FILES['file']['name'];
+                $_FILES['file']['type']     = $_FILES['file']['type'];
+                $_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name'];
+                $_FILES['file']['error']    = $_FILES['file']['error'];
+                $_FILES['file']['size']     = $_FILES['file']['size'];
+
+                if ($this->upload->do_upload('file')) {
+                    $uploadData = $this->upload->data();
+                    $_POST['vn_file'] = $uploadData['file_name'];
+                }
+            }
+
+            // Handle file upload 2 (file1)
+            if (!empty($_FILES['file1']['name'][1])) {
+                $this->upload->initialize($config);
+                $_FILES['file']['name']     = $_FILES['file1']['name'];
+                $_FILES['file']['type']     = $_FILES['file1']['type'];
+                $_FILES['file']['tmp_name'] = $_FILES['file1']['tmp_name'];
+                $_FILES['file']['error']    = $_FILES['file1']['error'];
+                $_FILES['file']['size']     = $_FILES['file1']['size'];
+
+                if ($this->upload->do_upload('file1')) {
+                    $uploadData = $this->upload->data();
+                    $_POST['vn_file1'] = $uploadData['file_name'];
+                }
+            }
         }
-        return false;
+
+        // Format date
+        if (!empty($_POST['vn_doj'])) {
+            $_POST['vn_doj'] = reformatDate($_POST['vn_doj']);
+        }
+
+        // Hash password if it's not already hashed
+        if (!empty($_POST['vn_password']) && !preg_match('/^[a-f0-9]{32}$/i', $_POST['vn_password'])) {
+            $_POST['vn_password'] = md5($_POST['vn_password']);
+        } else if (empty($_POST['vn_password'])) {
+            unset($_POST['vn_password']); // keep old one
+        }
+
+        $this->db->where('vn_id', $this->input->post('vn_id'));
+        return $this->db->update('vehicle_vendors', $this->input->post());
     }
 }

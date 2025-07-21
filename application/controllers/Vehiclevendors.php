@@ -60,6 +60,7 @@ class Vehiclevendors extends CI_Controller
     public function updatevehiclevendor()
     {
         $testxss = xssclean($_POST);
+
         if ($testxss) {
             $input = $this->input->post();
 
@@ -69,21 +70,38 @@ class Vehiclevendors extends CI_Controller
                 unset($input['vn_password']);
             }
 
+            try {
+                $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
 
-            $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
-
-            if ($response) {
-                $this->session->set_flashdata('successmessage', 'Vehicle vendor updated successfully.');
-                redirect('vehiclevendors');
-            } else {
-                $this->session->set_flashdata('warningmessage', 'Something went wrong. Try again.');
-                redirect('vehiclevendors');
+                $debug_data = [
+                    'input'    => $input,
+                    'response' => $response,
+                    'message'  => $response ? 'Success' : 'Failed to update vehicle vendor'
+                ];
+            } catch (Exception $e) {
+                $debug_data = [
+                    'error' => true,
+                    'exception' => $e->getMessage(),
+                    'input' => $input,
+                ];
             }
+
+            // For debugging in browser console
+            echo "<script>console.log(" . json_encode($debug_data) . ");</script>";
+
+            // Comment out redirect while debugging
+            // redirect('vehiclevendors');
+
         } else {
-            $this->session->set_flashdata('warningmessage', 'Error! Your input is not allowed. Please try again.');
-            redirect('vehiclevendors');
+            $debug_data = [
+                'error' => 'XSS Filtering failed',
+                'post_data' => $_POST
+            ];
+            echo "<script>console.log(" . json_encode($debug_data) . ");</script>";
+            // redirect('vehiclevendors');
         }
     }
+
 
 
     public function deletevehiclevendor()

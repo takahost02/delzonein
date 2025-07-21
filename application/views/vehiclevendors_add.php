@@ -84,7 +84,7 @@
 
           <div class="col-sm-6 col-md-3">
             <div class="form-group">
-              <label class="form-label">Password</label>
+              <label class="form-label">Password<span class="form-required">*</span></label>
               <input type="text" id="password" name="password" class="form-control" />
             </div>
           </div>

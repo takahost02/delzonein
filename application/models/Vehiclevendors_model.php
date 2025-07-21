@@ -52,41 +52,22 @@ class Vehiclevendors_model extends CI_Model
             $config['upload_path'] = 'assets/uploads/';
             $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
             $this->load->library('upload', $config);
-
-            // Handle file upload 1
             if (!empty($_FILES['file']['name'][0])) {
                 $uploadData = '';
                 $this->upload->initialize($config);
                 $_FILES['file']['name']     = $_FILES['file']['name'];
                 $_FILES['file']['type']     = $_FILES['file']['type'];
                 $_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name'];
-                $_FILES['file']['error']    = $_FILES['file']['error'];
+                $_FILES['file']['error']     = $_FILES['file']['error'];
                 $_FILES['file']['size']     = $_FILES['file']['size'];
                 if ($this->upload->do_upload('file')) {
                     $uploadData = $this->upload->data();
                     $_POST['vn_file'] = $uploadData['file_name'];
                 }
             }
-
-            // Handle file upload 2 (file1)
-            if (!empty($_FILES['file1']['name'][1])) {
-                $uploadData = '';
-                $this->upload->initialize($config);
-                $_FILES['file']['name']     = $_FILES['file1']['name'];
-                $_FILES['file']['type']     = $_FILES['file1']['type'];
-                $_FILES['file']['tmp_name'] = $_FILES['file1']['tmp_name'];
-                $_FILES['file']['error']    = $_FILES['file1']['error'];
-                $_FILES['file']['size']     = $_FILES['file1']['size'];
-                if ($this->upload->do_upload('file1')) {
-                    $uploadData = $this->upload->data();
-                    $_POST['vn_file1'] = $uploadData['file_name'];
-                }
-            }
         }
 
-        // Format date
         $_POST['vn_doj'] = reformatDate($_POST['vn_doj']);
-
         $this->db->where('vn_id', $this->input->post('vn_id'));
         return $this->db->update('vehicle_vendors', $this->input->post());
     }

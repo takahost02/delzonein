@@ -63,20 +63,39 @@ class Vehiclevendors extends CI_Controller
         if ($testxss) {
             $input = $this->input->post();
 
-            // Only hash password if entered
+            // Only hash password if a new one is entered
             if (!empty($input['vn_password'])) {
                 $input['vn_password'] = md5($input['vn_password']);
             } else {
-                unset($input['vn_password']); // keep old one
+                unset($input['vn_password']); // Preserve old password
             }
 
-            $response = $this->vehiclevendors_model->edit_vehiclevendor();
+            // Handle file upload
+            if (!empty($_FILES['file']['name'])) {
+                $config['upload_path']   = 'assets/uploads/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
+                $this->load->library('upload', $config);
+                $this->upload->initialize($config);
+                if ($this->upload->do_upload('file')) {
+                    $uploadData = $this->upload->data();
+                    $input['vn_file'] = $uploadData['file_name'];
+                }
+            } else {
+                $input['vn_file'] = $input['old_file']; // Keep old file
+            }
+
+            // Reformat date
+            $input['vn_doj'] = reformatDate($input['vn_doj']);
+
+            // Save using model
+            $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
 
             if ($response) {
                 $this->session->set_flashdata('successmessage', 'Vehicle vendor updated successfully.');
             } else {
                 $this->session->set_flashdata('warningmessage', 'Something went wrong. Try again.');
             }
+
             redirect('vehiclevendors');
         } else {
             $this->session->set_flashdata('warningmessage', 'Error! Your input is not allowed. Please try again.');

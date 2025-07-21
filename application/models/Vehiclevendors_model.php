@@ -46,23 +46,9 @@ class Vehiclevendors_model extends CI_Model
         return $this->db->select('*')->from('vehicle_vendors')->where('vn_id', $vn_id)->get()->result_array();
     }
 
-    public function edit_vehiclevendor()
+    public function edit_vehiclevendor($data)
     {
-        if (!empty($_FILES['file']['name'])) {
-            $config['upload_path']   = 'assets/uploads/';
-            $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
-            $this->load->library('upload', $config);
-            $this->upload->initialize($config);
-            if ($this->upload->do_upload('file')) {
-                $uploadData = $this->upload->data();
-                $_POST['vn_file'] = $uploadData['file_name'];
-            }
-        } else {
-            $_POST['vn_file'] = $this->input->post('old_file');
-        }
-
-        $_POST['vn_doj'] = reformatDate($_POST['vn_doj']);
-        $this->db->where('vn_id', $this->input->post('vn_id'));
-        return $this->db->update('vehicle_vendors', $this->input->post());
+        $this->db->where('vn_id', $data['vn_id']);
+        return $this->db->update('vehicle_vendors', $data);
     }
 }

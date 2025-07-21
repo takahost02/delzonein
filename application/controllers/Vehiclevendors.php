@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Vehiclevendors extends CI_Controller {
+class Vehiclevendors extends CI_Controller
+{
 
     function __construct()
     {
@@ -28,6 +29,12 @@ class Vehiclevendors extends CI_Controller {
     {
         $testxss = true;
         if ($testxss) {
+            $input = $this->input->post();
+            if (!empty($input['d_password'])) {
+                $input['d_password'] = md5($input['d_password']);
+            } else {
+                unset($input['d_password']);
+            }
             $response = $this->vehiclevendors_model->add_vehiclevendors($this->input->post());
             if ($response) {
                 $this->session->set_flashdata('successmessage', 'New vehiclevendor added successfully..');
@@ -80,7 +87,8 @@ class Vehiclevendors extends CI_Controller {
         redirect('vehiclevendors');
     }
 
-    public function download_template() {
+    public function download_template()
+    {
         $this->load->helper('download');
         $file_path = './uploads/templates/vehiclevendor.csv';
         if (file_exists($file_path)) {
@@ -92,15 +100,16 @@ class Vehiclevendors extends CI_Controller {
         }
     }
 
-	public function import_csv() {
+    public function import_csv()
+    {
         $config['upload_path'] = './uploads/';
         $config['allowed_types'] = 'csv';
         $this->load->library('upload', $config);
-    
+
         if ($this->upload->do_upload('file')) {
             $file_data = $this->upload->data();
             $file_path = $file_data['full_path'];
-    
+
             if (($handle = fopen($file_path, 'r')) !== FALSE) {
                 fgetcsv($handle); // Skip the header row
                 $this->db->trans_start();
@@ -120,7 +129,7 @@ class Vehiclevendors extends CI_Controller {
                 }
                 $this->db->trans_complete();
                 fclose($handle);
-                    if ($this->db->trans_status() === FALSE) {
+                if ($this->db->trans_status() === FALSE) {
                     $this->session->set_flashdata('warningmessage', 'Error occurred while importing CSV data.');
                 } else {
                     $this->session->set_flashdata('message', 'CSV data successfully imported.');
@@ -136,5 +145,4 @@ class Vehiclevendors extends CI_Controller {
             redirect('vehiclevendors');
         }
     }
-    
 }

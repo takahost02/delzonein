@@ -85,7 +85,7 @@
           <div class="col-sm-6 col-md-3">
             <div class="form-group">
               <label class="form-label">Password<span class="form-required">*</span></label>
-              <input type="text" id="vn_password" name="vn_password" class="form-control" placeholder="password" />
+              <input type="text" name="vn_password" class="form-control" placeholder="password" />
             </div>
           </div>
 

@@ -30,10 +30,10 @@ class Vehiclevendors extends CI_Controller
         $testxss = true;
         if ($testxss) {
             $input = $this->input->post();
-            if (!empty($input['d_password'])) {
-                $input['d_password'] = md5($input['d_password']);
+            if (!empty($input['vn_password'])) {
+                $input['vn_password'] = md5($input['vn_password']);
             } else {
-                unset($input['d_password']);
+                unset($input['vn_password']);
             }
             $response = $this->vehiclevendors_model->add_vehiclevendors($this->input->post());
             if ($response) {
@@ -62,10 +62,10 @@ class Vehiclevendors extends CI_Controller
         $testxss = xssclean($_POST);
         if ($testxss) {
             $input = $this->input->post();
-            if (!empty($input['d_password'])) {
-                $input['d_password'] = md5($input['d_password']);
+            if (!empty($input['vn_password'])) {
+                $input['vn_password'] = md5($input['vn_password']);
             } else {
-                unset($input['d_password']);
+                unset($input['vn_password']);
             }
             $response = $this->vehiclevendors_model->edit_vehiclevendor($this->input->post());
             if ($response) {

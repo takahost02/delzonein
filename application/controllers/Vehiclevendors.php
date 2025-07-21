@@ -63,12 +63,12 @@ class Vehiclevendors extends CI_Controller
         if ($testxss) {
             $input = $this->input->post();
 
-            // Only hash password if a new one is provided
             if (!empty($input['vn_password'])) {
                 $input['vn_password'] = md5($input['vn_password']);
             } else {
                 unset($input['vn_password']); // Prevent overwriting with empty or hashed value
             }
+
 
             $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
 

@@ -78,7 +78,7 @@
           <div class="col-sm-6 col-md-3">
             <div class="form-group">
               <label class="form-label">Contract Document</label>
-              <input type="text" name="vn_file" value="<?= $vehiclevendordetails[0]['vn_file'] ?? '' ?>">
+              <input type="file" name="vn_file" value="<?= $vehiclevendordetails[0]['vn_file'] ?? '' ?>">
             </div>
           </div>
 

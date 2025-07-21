@@ -60,45 +60,22 @@ class Vehiclevendors extends CI_Controller
     public function updatevehiclevendor()
     {
         $testxss = xssclean($_POST);
+        if ($testxss) {
+            $input = $this->input->post();
 
-        echo "<pre>"; // for better formatting
+            // Password hashing is now handled in model
+            $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
 
-        // Debug XSS check
-        if (!$testxss) {
-            echo "XSS check failed. Input not allowed.\n";
-            print_r($_POST);
-            exit;
-        }
-
-        $input = $this->input->post();
-
-
-        // Debug password handling
-        if (!empty($input['vn_password'])) {
-            $input['vn_password'] = md5($input['vn_password']);
-            echo "Password hashed: " . $input['vn_password'] . "\n";
+            if ($response) {
+                $this->session->set_flashdata('successmessage', 'Vehicle vendor updated successfully.');
+            } else {
+                $this->session->set_flashdata('warningmessage', 'Something went wrong. Try again.');
+            }
+            redirect('vehiclevendors');
         } else {
-            unset($input['vn_password']);
+            $this->session->set_flashdata('warningmessage', 'Error! Your input is not allowed. Please try again.');
+            redirect('vehiclevendors');
         }
-
-        $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
-
-        // Debug model response
-        if ($response) {
-            echo "Success: Vehicle vendor updated successfully.\n";
-        } else {
-            echo "Error: Something went wrong while updating.\n";
-        }
-
-        exit; // remove this when done debugging
-
-        // Final redirect logic (used only in production)
-        if ($response) {
-            $this->session->set_flashdata('successmessage', 'Vehicle vendor updated successfully.');
-        } else {
-            $this->session->set_flashdata('warningmessage', 'Something went wrong. Try again.');
-        }
-        redirect('vehiclevendors');
     }
 
 

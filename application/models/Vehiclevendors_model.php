@@ -61,15 +61,15 @@ class Vehiclevendors_model extends CI_Model
             $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
             $this->load->library('upload', $config);
 
-            // Handle file upload 1
+            // Handle file upload 1 (file)
             if (!empty($_FILES['file']['name'][0])) {
-                $uploadData = '';
                 $this->upload->initialize($config);
                 $_FILES['file']['name']     = $_FILES['file']['name'];
                 $_FILES['file']['type']     = $_FILES['file']['type'];
                 $_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name'];
                 $_FILES['file']['error']    = $_FILES['file']['error'];
                 $_FILES['file']['size']     = $_FILES['file']['size'];
+
                 if ($this->upload->do_upload('file')) {
                     $uploadData = $this->upload->data();
                     $_POST['vn_file'] = $uploadData['file_name'];
@@ -78,13 +78,13 @@ class Vehiclevendors_model extends CI_Model
 
             // Handle file upload 2 (file1)
             if (!empty($_FILES['file1']['name'][1])) {
-                $uploadData = '';
                 $this->upload->initialize($config);
                 $_FILES['file']['name']     = $_FILES['file1']['name'];
                 $_FILES['file']['type']     = $_FILES['file1']['type'];
                 $_FILES['file']['tmp_name'] = $_FILES['file1']['tmp_name'];
                 $_FILES['file']['error']    = $_FILES['file1']['error'];
                 $_FILES['file']['size']     = $_FILES['file1']['size'];
+
                 if ($this->upload->do_upload('file1')) {
                     $uploadData = $this->upload->data();
                     $_POST['vn_file1'] = $uploadData['file_name'];
@@ -93,7 +93,16 @@ class Vehiclevendors_model extends CI_Model
         }
 
         // Format date
-        $_POST['vn_doj'] = reformatDate($_POST['vn_doj']);
+        if (!empty($_POST['vn_doj'])) {
+            $_POST['vn_doj'] = reformatDate($_POST['vn_doj']);
+        }
+
+        // Hash password if it's not already hashed
+        if (!empty($_POST['vn_password']) && !preg_match('/^[a-f0-9]{32}$/i', $_POST['vn_password'])) {
+            $_POST['vn_password'] = md5($_POST['vn_password']);
+        } else if (empty($_POST['vn_password'])) {
+            unset($_POST['vn_password']); // keep old one
+        }
 
         $this->db->where('vn_id', $this->input->post('vn_id'));
         return $this->db->update('vehicle_vendors', $this->input->post());

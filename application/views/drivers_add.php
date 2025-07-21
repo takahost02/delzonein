@@ -72,7 +72,7 @@
               <div class="col-sm-6 col-md-3">
                 <div class="form-group">
                   <label class="form-label">Password <span class="form-required">*</span></label>
-                  <input type="password" name="d_password" value="<?php echo (isset($driverdetails)) ? $driverdetails[0]['d_password'] : '' ?>" class="form-control" placeholder="Password">
+                  <input type="text" name="d_password" value="<?php echo (isset($driverdetails)) ? $driverdetails[0]['d_password'] : '' ?>" class="form-control" placeholder="Password">
                 </div>
               </div>
 

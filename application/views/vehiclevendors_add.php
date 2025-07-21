@@ -92,7 +92,7 @@
           <div class="col-sm-6 col-md-3">
             <div class="form-group">
               <label class="form-label">Email ID <span class="form-required">*</span></label>
-              <input type="email" name="vn_email" class="form-control" placeholder="Enter email address" required />
+              <input type="email" name="vn_email" class="form-control" value="<?php echo (isset($vehiclevendordetails)) ? $vehiclevendordetails[0]['vn_email'] : '' ?>" placeholder="Enter email address" required />
             </div>
           </div>
 

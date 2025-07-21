@@ -63,7 +63,44 @@ class Vehiclevendors extends CI_Controller
         if ($testxss) {
             $input = $this->input->post();
 
-            // Password hashing is now handled in model
+            // Handle file uploads
+            if (!empty($_FILES)) {
+                $config['upload_path'] = 'assets/uploads/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
+                $this->load->library('upload', $config);
+
+                // File 1: 'vn_file'
+                if (!empty($_FILES['vn_file']['name'])) {
+                    $this->upload->initialize($config);
+                    if ($this->upload->do_upload('vn_file')) {
+                        $uploadData = $this->upload->data();
+                        $input['vn_file'] = $uploadData['file_name'];
+                    }
+                }
+
+                // File 2: 'vn_file1'
+                if (!empty($_FILES['vn_file1']['name'])) {
+                    $this->upload->initialize($config);
+                    if ($this->upload->do_upload('vn_file1')) {
+                        $uploadData = $this->upload->data();
+                        $input['vn_file1'] = $uploadData['file_name'];
+                    }
+                }
+            }
+
+            // Reformat Date
+            if (!empty($input['vn_doj'])) {
+                $input['vn_doj'] = reformatDate($input['vn_doj']); // assume this returns Y-m-d
+            }
+
+            // Hash password if needed
+            if (!empty($input['vn_password']) && !preg_match('/^[a-f0-9]{32}$/i', $input['vn_password'])) {
+                $input['vn_password'] = md5($input['vn_password']);
+            } else if (empty($input['vn_password'])) {
+                unset($input['vn_password']); // retain old password
+            }
+
+            // Update using model
             $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
 
             if ($response) {
@@ -77,6 +114,7 @@ class Vehiclevendors extends CI_Controller
             redirect('vehiclevendors');
         }
     }
+
 
 
 

@@ -66,24 +66,31 @@ class Drivers extends CI_Controller
 		$testxss = xssclean($_POST);
 		if ($testxss) {
 			$input = $this->input->post();
+
+			// Securely hash password if it's provided
 			if (!empty($input['d_password'])) {
-				$input['d_password'] = md5($input['d_password']);
+				$input['d_password'] = md5($input['d_password'], PASSWORD_DEFAULT);
 			} else {
-				unset($input['d_password']);
+				unset($input['d_password']); // Don't update password if not provided
 			}
-			$response = $this->drivers_model->edit_driver($this->input->post());
+
+			// Pass the modified $input to the model
+			$response = $this->drivers_model->edit_driver($input);
+
 			if ($response) {
 				$this->session->set_flashdata('successmessage', 'Driver updated successfully..');
 				redirect('drivers');
 			} else {
-				$this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
+				$this->session->set_flashdata('warningmessage', 'Something went wrong.. Try again');
 				redirect('drivers');
 			}
 		} else {
-			$this->session->set_flashdata('warningmessage', 'Error! Your input are not allowed.Please try again');
+			$this->session->set_flashdata('warningmessage', 'Error! Your input is not allowed. Please try again');
 			redirect('drivers');
 		}
 	}
+
+
 	public function deletedriver()
 	{
 		$d_id = $this->input->post('del_id');

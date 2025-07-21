@@ -29,7 +29,13 @@ class Vehiclevendors extends CI_Controller
     {
         $testxss = true;
         if ($testxss) {
-            $response = $this->vehiclevendors_model->add_vehiclevendors($this->input->post());
+            $input = $this->input->post();
+            if (!empty($input['vn_password'])) {
+                $input['vn_password'] = md5($input['vn_password']);
+            } else {
+                unset($input['vn_password']);
+            }
+            $response = $this->vehiclevendors_model->add_vehiclevendors($input);
             if ($response) {
                 $this->session->set_flashdata('successmessage', 'New vehiclevendor added successfully..');
                 redirect('vehiclevendors');
@@ -54,20 +60,48 @@ class Vehiclevendors extends CI_Controller
     public function updatevehiclevendor()
     {
         $testxss = xssclean($_POST);
-        if ($testxss) {
-            $response = $this->vehiclevendors_model->edit_vehiclevendor($this->input->post());
-            if ($response) {
-                $this->session->set_flashdata('successmessage', 'vehiclevendor updated successfully..');
-                redirect('vehiclevendors');
-            } else {
-                $this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
-                redirect('vehiclevendors');
-            }
-        } else {
-            $this->session->set_flashdata('warningmessage', 'Error Your input are not allowed.Please try again');
-            redirect('vehiclevendors');
+
+        echo "<pre>"; // for better formatting
+
+        // Debug XSS check
+        if (!$testxss) {
+            echo "XSS check failed. Input not allowed.\n";
+            print_r($_POST);
+            exit;
         }
+
+        $input = $this->input->post();
+
+
+        // Debug password handling
+        if (!empty($input['vn_password'])) {
+            $input['vn_password'] = md5($input['vn_password']);
+            echo "Password hashed: " . $input['vn_password'] . "\n";
+        } else {
+            unset($input['vn_password']);
+        }
+
+        $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
+
+        // Debug model response
+        if ($response) {
+            echo "Success: Vehicle vendor updated successfully.\n";
+        } else {
+            echo "Error: Something went wrong while updating.\n";
+        }
+
+        exit; // remove this when done debugging
+
+        // Final redirect logic (used only in production)
+        if ($response) {
+            $this->session->set_flashdata('successmessage', 'Vehicle vendor updated successfully.');
+        } else {
+            $this->session->set_flashdata('warningmessage', 'Something went wrong. Try again.');
+        }
+        redirect('vehiclevendors');
     }
+
+
 
     public function deletevehiclevendor()
     {

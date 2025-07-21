@@ -34,7 +34,7 @@
           </div>
 
           <div class="col-sm-6 col-md-3">
-            <label class="form-label">Comtact Person Name<span class="form-required">*</span></label>
+            <label class="form-label">Contact Person Name<span class="form-required">*</span></label>
             <div class="form-group">
               <input type="text" name="vn_contact_person" required id="vn_contact_person" class="form-control" placeholder="Comtact Person Name" value="<?php echo (isset($vehiclevendordetails)) ? $vehiclevendordetails[0]['vn_contact_person'] : '' ?>">
             </div>
@@ -78,24 +78,30 @@
           <div class="col-sm-6 col-md-3">
             <div class="form-group">
               <label class="form-label">Contract Document</label>
-              <input type="file" id="file" name="file" class="form-control" />
+              <input type="hidden" name="old_file" value="<?= $vehiclevendordetails[0]['vn_file'] ?? '' ?>">
             </div>
           </div>
+
+          <div class="col-sm-6 col-md-3">
+            <div class="form-group">
+              <label class="form-label">Password<span class="form-required">*</span></label>
+              <input type="text" name="vn_password" class="form-control" placeholder="password" />
+            </div>
+          </div>
+
         </div>
+        <input type="hidden" id="vn_created_by" name="vn_created_by" value="<?php echo output($this->session->userdata['session_data']['u_id']); ?>">
+        <input type="hidden" id="vn_created_date" name="vn_created_date" value="<?php echo date('Y-m-d h:i:s'); ?>">
+        <div class="card-footer text-right">
+          <button type="submit" class="btn btn-primary"> <?php echo (isset($vehiclevendordetails)) ? 'Update Vehicle Vendor' : 'Add Vehicle Vendor' ?></button>
 
-      </div>
-      <input type="hidden" id="vn_created_by" name="vn_created_by" value="<?php echo output($this->session->userdata['session_data']['u_id']); ?>">
-      <input type="hidden" id="vn_created_date" name="vn_created_date" value="<?php echo date('Y-m-d h:i:s'); ?>">
-      <div class="card-footer text-right">
-        <button type="submit" class="btn btn-primary"> <?php echo (isset($vehiclevendordetails)) ? 'Update Vehicle Vendor' : 'Add Vehicle Vendor' ?></button>
-
-        <!-- <?php if (!isset($vehiclevendordetails)) { ?>
+          <!-- <?php if (!isset($vehiclevendordetails)) { ?>
                   <div class="float-left">
                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Bulk Import Conductors</button>
                   <a href="<?php echo site_url('conductors/download_template'); ?>">Download CSV Template</a>
                   </div>
                   <?php } ?> -->
-      </div>
+        </div>
     </form>
   </div>
 </section>

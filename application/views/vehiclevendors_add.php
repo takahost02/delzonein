@@ -78,9 +78,19 @@
           <div class="col-sm-6 col-md-3">
             <div class="form-group">
               <label class="form-label">Contract Document</label>
-              <input type="file" name="vn_file" value="<?= $vehiclevendordetails[0]['vn_file'] ?? '' ?>">
+              <input type="file" name="vn_file" class="form-control">
+
+              <?php if (!empty($vehiclevendordetails[0]['vn_file'])): ?>
+                <small class="form-text text-muted">
+                  Existing file:
+                  <a href="<?= base_url('assets/uploads/' . $vehiclevendordetails[0]['vn_file']) ?>" target="_blank">
+                    <?= $vehiclevendordetails[0]['vn_file'] ?>
+                  </a>
+                </small>
+              <?php endif; ?>
             </div>
           </div>
+
 
           <div class="col-sm-6 col-md-3">
             <div class="form-group">

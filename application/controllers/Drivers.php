@@ -1,22 +1,23 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Drivers extends CI_Controller {
+class Drivers extends CI_Controller
+{
 
-	 function __construct()
-     {
-          parent::__construct();
-          $this->load->database();
-          $this->load->model('drivers_model');
-          $this->load->helper(array('form', 'url','string'));
-          $this->load->library('form_validation');
-          $this->load->library('session');
-     }
+	function __construct()
+	{
+		parent::__construct();
+		$this->load->database();
+		$this->load->model('drivers_model');
+		$this->load->helper(array('form', 'url', 'string'));
+		$this->load->library('form_validation');
+		$this->load->library('session');
+	}
 
 	public function index()
 	{
 		$data['driverslist'] = $this->drivers_model->getall_drivers();
-		$this->template->template_render('drivers_management',$data);
+		$this->template->template_render('drivers_management', $data);
 	}
 	public function adddrivers()
 	{
@@ -24,29 +25,32 @@ class Drivers extends CI_Controller {
 	}
 	public function insertdriver()
 	{
-		$this->form_validation->set_rules('d_licenseno','License Number','required|trim|is_unique[vehicles.v_registration_no]');
+		$this->form_validation->set_rules('d_licenseno', 'License Number', 'required|trim|is_unique[vehicles.v_registration_no]');
 		$this->form_validation->set_message('is_unique', '%s is already exist');
-		$this->form_validation->set_rules('d_name','Name','required|trim');
-		$this->form_validation->set_rules('d_mobile','Mobile','required|trim');
-        $this->form_validation->set_rules('d_address', 'Address', 'required|trim');
-		$this->form_validation->set_rules('d_age','Age','required|trim');
-		$this->form_validation->set_rules('d_licenseno','License Number','required|trim');
-		$this->form_validation->set_rules('d_license_expdate','License Exp Date','required|trim');
-		$this->form_validation->set_rules('d_total_exp','Total Experiance','required|trim');
-		$this->form_validation->set_rules('d_doj','Date of Joining','required|trim');
+		$this->form_validation->set_rules('d_name', 'Name', 'required|trim');
+		$this->form_validation->set_rules('d_mobile', 'Mobile', 'required|trim');
+		$this->form_validation->set_rules('d_address', 'Address', 'required|trim');
+		$this->form_validation->set_rules('d_age', 'Age', 'required|trim');
+		$this->form_validation->set_rules('d_licenseno', 'License Number', 'required|trim');
+		$this->form_validation->set_rules('d_license_expdate', 'License Exp Date', 'required|trim');
+		$this->form_validation->set_rules('d_total_exp', 'Total Experiance', 'required|trim');
+		$this->form_validation->set_rules('d_doj', 'Date of Joining', 'required|trim');
+		$this->form_validation->set_rules('d_password', 'Password', 'required|trim');
 		$testxss = true;
-		if($this->form_validation->run()==TRUE && $testxss){
+		if ($this->form_validation->run() == TRUE && $testxss) {
+			$input = $this->input->post();
+			$input['d_password'] = md5($input['d_password']);
 			$response = $this->drivers_model->add_drivers($this->input->post());
-			if($response) {
+			if ($response) {
 				$this->session->set_flashdata('successmessage', 'New driver added successfully..');
-			    redirect('drivers');
+				redirect('drivers');
 			}
 		} else {
-			$errormsg = preg_replace( "/\r|\n/", "", trim(str_replace('.',',',strip_tags(validation_errors()))));
-			if(!$testxss) {
+			$errormsg = preg_replace("/\r|\n/", "", trim(str_replace('.', ',', strip_tags(validation_errors()))));
+			if (!$testxss) {
 				$errormsg = 'Error! Your input are not allowed.Please try again';
 			}
-			$this->session->set_flashdata('warningmessage',$errormsg);
+			$this->session->set_flashdata('warningmessage', $errormsg);
 			redirect('drivers/adddrivers');
 		}
 	}
@@ -54,22 +58,21 @@ class Drivers extends CI_Controller {
 	{
 		$d_id = $this->uri->segment(3);
 		$data['driverdetails'] = $this->drivers_model->get_driverdetails($d_id);
-		$this->template->template_render('drivers_add',$data);
+		$this->template->template_render('drivers_add', $data);
 	}
 
 	public function updatedriver()
 	{
 		$testxss = xssclean($_POST);
-		if($testxss){
+		if ($testxss) {
 			$response = $this->drivers_model->edit_driver($this->input->post());
-				if($response) {
-					$this->session->set_flashdata('successmessage', 'Driver updated successfully..');
-				    redirect('drivers');
-				} else
-				{
-					$this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
-				    redirect('drivers');
-				}
+			if ($response) {
+				$this->session->set_flashdata('successmessage', 'Driver updated successfully..');
+				redirect('drivers');
+			} else {
+				$this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
+				redirect('drivers');
+			}
 		} else {
 			$this->session->set_flashdata('warningmessage', 'Error! Your input are not allowed.Please try again');
 			redirect('drivers');
@@ -78,35 +81,37 @@ class Drivers extends CI_Controller {
 	public function deletedriver()
 	{
 		$d_id = $this->input->post('del_id');
-		$deleteresp = $this->db->delete('drivers', array('d_id' => $d_id)); 
-		if($deleteresp) {
+		$deleteresp = $this->db->delete('drivers', array('d_id' => $d_id));
+		if ($deleteresp) {
 			$this->session->set_flashdata('successmessage', 'Driver deleted successfully..');
 		} else {
 			$this->session->set_flashdata('warningmessage', 'Unexpected error..Try again');
 		}
 		redirect('drivers');
 	}
-	public function download_template() {
-        $this->load->helper('download');
-        $file_path = './uploads/templates/drivers.csv';
-        if (file_exists($file_path)) {
-            $data = file_get_contents($file_path); // Read the file's contents
-            force_download('drivers_template.csv', $data);
-        } else {
-            $this->session->set_flashdata('message', 'The template file does not exist.');
-            redirect('drivers');
-        }
-    }
+	public function download_template()
+	{
+		$this->load->helper('download');
+		$file_path = './uploads/templates/drivers.csv';
+		if (file_exists($file_path)) {
+			$data = file_get_contents($file_path); // Read the file's contents
+			force_download('drivers_template.csv', $data);
+		} else {
+			$this->session->set_flashdata('message', 'The template file does not exist.');
+			redirect('drivers');
+		}
+	}
 
-	public function import_csv() {
+	public function import_csv()
+	{
 		$config['upload_path'] = './uploads/';
 		$config['allowed_types'] = 'csv';
 		$this->load->library('upload', $config);
-	
+
 		if ($this->upload->do_upload('file')) {
 			$file_data = $this->upload->data();
 			$file_path = $file_data['full_path'];
-	
+
 			if (($handle = fopen($file_path, 'r')) !== FALSE) {
 				fgetcsv($handle); // Skip the header row
 				$this->db->trans_start();
@@ -145,5 +150,4 @@ class Drivers extends CI_Controller {
 			redirect('drivers');
 		}
 	}
-	
 }

@@ -73,24 +73,33 @@ class Vehiclevendors extends CI_Controller
             try {
                 $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
 
-                if ($response) {
-                    $this->session->set_flashdata('successmessage', 'Vehicle vendor updated successfully.');
-                } else {
-                    log_message('error', 'Update failed. Input: ' . print_r($input, true));
-                    $this->session->set_flashdata('warningmessage', 'Update failed. Try again.');
-                }
+                $debug_data = [
+                    'input'    => $input,
+                    'response' => $response,
+                    'message'  => $response ? 'Success' : 'Failed to update vehicle vendor'
+                ];
             } catch (Exception $e) {
-                log_message('error', 'Exception during update: ' . $e->getMessage());
-                $this->session->set_flashdata('warningmessage', 'Unexpected error: ' . $e->getMessage());
+                $debug_data = [
+                    'error' => true,
+                    'exception' => $e->getMessage(),
+                    'input' => $input,
+                ];
             }
+
+            // For debugging in browser console
+            echo "<script>console.log(" . json_encode($debug_data) . ");</script>";
+
+            // Comment out redirect while debugging
+            redirect('vehiclevendors');
         } else {
-            log_message('error', 'XSS blocked request. Data: ' . print_r($_POST, true));
-            $this->session->set_flashdata('warningmessage', 'Invalid input detected.');
+            $debug_data = [
+                'error' => 'XSS Filtering failed',
+                'post_data' => $_POST
+            ];
+            echo "<script>console.log(" . json_encode($debug_data) . ");</script>";
+            redirect('vehiclevendors');
         }
-
-        redirect('vehiclevendors');
     }
-
 
 
 

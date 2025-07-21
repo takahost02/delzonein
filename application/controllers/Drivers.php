@@ -39,8 +39,7 @@ class Drivers extends CI_Controller
 		$testxss = true;
 		if ($this->form_validation->run() == TRUE && $testxss) {
 			$input = $this->input->post();
-			$input['d_password'] = md5($input['d_password']);
-			$response = $this->drivers_model->add_drivers($this->input->post());
+			$response = $this->drivers_model->add_drivers($input);
 			if ($response) {
 				$this->session->set_flashdata('successmessage', 'New driver added successfully..');
 				redirect('drivers');

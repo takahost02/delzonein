@@ -9,37 +9,50 @@ class Drivers_model extends CI_Model
 			$config['upload_path'] = 'assets/uploads/';
 			$config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
 			$this->load->library('upload', $config);
+
+			// Upload file (d_file)
 			if (!empty($_FILES['file']['name'][0])) {
-				$uploadData = '';
 				$this->upload->initialize($config);
 				$_FILES['file']['name']     = $_FILES['file']['name'];
 				$_FILES['file']['type']     = $_FILES['file']['type'];
 				$_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name'];
-				$_FILES['file']['error']     = $_FILES['file1']['error'];
+				$_FILES['file']['error']    = $_FILES['file']['error'];
 				$_FILES['file']['size']     = $_FILES['file']['size'];
+
 				if ($this->upload->do_upload('file')) {
 					$uploadData = $this->upload->data();
 					$data['d_file'] = $uploadData['file_name'];
 				}
 			}
+
+			// Upload file1 (d_file1)
 			if (!empty($_FILES['file1']['name'][1])) {
-				$uploadData = '';
 				$this->upload->initialize($config);
 				$_FILES['file']['name']     = $_FILES['file1']['name'];
 				$_FILES['file']['type']     = $_FILES['file1']['type'];
 				$_FILES['file']['tmp_name'] = $_FILES['file1']['tmp_name'];
-				$_FILES['file']['error']     = $_FILES['file1']['error'];
+				$_FILES['file']['error']    = $_FILES['file1']['error'];
 				$_FILES['file']['size']     = $_FILES['file1']['size'];
+
 				if ($this->upload->do_upload('file1')) {
 					$uploadData = $this->upload->data();
 					$data['d_file1'] = $uploadData['file_name'];
 				}
 			}
 		}
+
+		// Reformat dates
 		$data['d_license_expdate'] = reformatDate($data['d_license_expdate']);
 		$data['d_doj'] = reformatDate($data['d_doj']);
-		return	$this->db->insert('drivers', $data);
+
+		// Hash password only if not already md5
+		if (!empty($data['d_password']) && !preg_match('/^[a-f0-9]{32}$/i', $data['d_password'])) {
+			$data['d_password'] = md5($data['d_password']);
+		}
+
+		return $this->db->insert('drivers', $data);
 	}
+
 	public function getall_drivers()
 	{
 		return $this->db->select('*')->from('drivers')->order_by('d_id', 'desc')->get()->result_array();

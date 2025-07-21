@@ -79,16 +79,8 @@
             <div class="form-group">
               <label class="form-label">Contract Document</label>
               <input type="file" id="file" name="file" class="form-control" />
-
-              <?php if (!empty($vehiclevendordetails->vn_file)) : ?>
-                <br />
-                <a href="<?= base_url('assets/uploads/' . $vehiclevendordetails->vn_file) ?>" target="_blank">
-                  View Existing Document
-                </a>
-              <?php endif; ?>
             </div>
           </div>
-
 
           <div class="col-sm-6 col-md-3">
             <div class="form-group">

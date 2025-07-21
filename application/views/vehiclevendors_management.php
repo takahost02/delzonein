@@ -73,7 +73,7 @@
                                  </a>
                                  <?php if (userpermission('lr_vehiclevendors_del')) { ?>
 
-                                    <a data-toggle="modal" href="" onclick="confirmation('<?php echo base_url(); ?>vehiclevendors/deleteconductor','<?= output($vehiclevendorslist['vn_id']); ?>')" data-target="#deleteconfirm" class="icon text-danger" data-toggle="tooltip" data-placement="top"><i class="fa fa-trash"></i></a>
+                                    <a data-toggle="modal" href="" onclick="confirmation('<?php echo base_url(); ?>vehiclevendors/deletevehiclevendor','<?= output($vehiclevendorslist['vn_id']); ?>')" data-target="#deleteconfirm" class="icon text-danger" data-toggle="tooltip" data-placement="top"><i class="fa fa-trash"></i></a>
                                     </a>
                                  <?php } ?>
                               </td>

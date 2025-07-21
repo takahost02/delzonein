@@ -79,7 +79,6 @@ class Vehiclevendors extends CI_Controller
             echo "Password hashed: " . $input['vn_password'] . "\n";
         } else {
             unset($input['vn_password']);
-            echo "No new password provided. Using existing password.\n";
         }
 
         $response = $this->vehiclevendors_model->edit_vehiclevendor($input);

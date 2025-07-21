@@ -61,6 +61,12 @@ class Vehiclevendors extends CI_Controller
     {
         $testxss = xssclean($_POST);
         if ($testxss) {
+            $input = $this->input->post();
+            if (!empty($input['d_password'])) {
+                $input['d_password'] = md5($input['d_password']);
+            } else {
+                unset($input['d_password']);
+            }
             $response = $this->vehiclevendors_model->edit_vehiclevendor($this->input->post());
             if ($response) {
                 $this->session->set_flashdata('successmessage', 'vehiclevendor updated successfully..');

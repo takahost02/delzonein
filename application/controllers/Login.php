@@ -1,8 +1,9 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-class Login extends CI_Controller {
-    //To load initial libraries, functions
-	function __construct( )
+defined('BASEPATH') or exit('No direct script access allowed');
+class Login extends CI_Controller
+{
+	//To load initial libraries, functions
+	function __construct()
 	{
 		parent::__construct();
 		$this->load->helper('url');
@@ -15,38 +16,36 @@ class Login extends CI_Controller {
 	//To load login page
 	public function index()    //Login Controller
 	{
-	  if (isset($this->session->userdata['session_data'])) {
-            $url = base_url() . "dashboard";
-            header("location: $url");
-        } else {
-            $this->load->view('login');
-        }
+		if (isset($this->session->userdata['session_data'])) {
+			$url = base_url() . "dashboard";
+			header("location: $url");
+		} else {
+			$this->load->view('login');
+		}
 	}
 	//To login functionality check
-	public function login_action() 
+	public function login_action()
 	{
-		
 		$this->form_validation->set_rules('username', 'Username', 'required');
 		$this->form_validation->set_rules('password', 'Password', 'required');
-		if($this->form_validation->run() == FALSE) 
-		{
-		  $this->session->set_flashdata('warningmessage', "Email and Password is required and can't be empty.");
-		  redirect('login');
-		}
-		else 
-		{ 
-		$this->load->model('login_model');
-		$result = $this->login_model->check_login($this->input->post());
+
+		if ($this->form_validation->run() == FALSE) {
+			$this->session->set_flashdata('warningmessage', "Email and Password is required and can't be empty.");
+			redirect('login');
+		} else {
+			$this->load->model('login_model');
+			$result = $this->login_model->check_login($this->input->post());
+
 			if ($result != FALSE) {
 				$user_type = $result['user_type'];
-				$is_active = $result['u_isactive'] ?? 0;
+				$is_active = $result['u_isactive'] ?? $result['d_isactive'] ?? $result['vn_isactive'] ?? 0;
 
 				if ($is_active == 0) {
 					$this->session->set_flashdata('warningmessage', 'User not active. Please contact admin');
 					redirect('login');
 				}
 
-				// Set session common data
+				// Set session data
 				$session_data = array(
 					'u_id'       => $result['u_id'] ?? $result['d_id'] ?? $result['vn_id'],
 					'name'       => $result['u_name'] ?? $result['d_name'] ?? $result['vn_name'],
@@ -55,28 +54,35 @@ class Login extends CI_Controller {
 					'u_isactive' => $is_active
 				);
 
-				// Fetch roles only for admin
-				if ($user_type === 'admin') {
-					$userroles = $this->login_model->userroles($result['u_id']);
-					if (empty($userroles)) {
-						$this->session->set_flashdata('warningmessage', 'User role is not defined. Please contact admin');
-						redirect('login');
-					}
-					$this->session->set_userdata('userroles', $userroles);
-					$this->db->set('u_lastlogin', 'NOW()', false)->where('u_id', $result['u_id'])->update('login');
-				}
-
-				// Store session data
 				$this->session->set_userdata('session_data', $session_data);
 
-				// Redirect to dashboard or respective user panel
+				// Set user roles and update last login — FOR ALL user types
+				$u_id = $session_data['u_id'];
+				$userroles = $this->login_model->userroles($u_id, $user_type);
+				if (empty($userroles)) {
+					$this->session->set_flashdata('warningmessage', 'User role is not defined. Please contact admin');
+					redirect('login');
+				}
+				$this->session->set_userdata('userroles', $userroles);
+
+				// Update last login time based on user type
+				if ($user_type === 'admin') {
+					$this->db->set('u_lastlogin', 'NOW()', false)->where('u_id', $u_id)->update('login');
+				} elseif ($user_type === 'driver') {
+					$this->db->set('d_lastlogin', 'NOW()', false)->where('d_id', $u_id)->update('drivers');
+				} elseif ($user_type === 'vendor') {
+					$this->db->set('vn_lastlogin', 'NOW()', false)->where('vn_id', $u_id)->update('vehicle_vendors');
+				}
+
+				// Redirect based on user type (optional)
 				redirect('dashboard');
 			}
-
 		}
 	}
+
 	//To logout session from browser
-	public function logout() {
+	public function logout()
+	{
 		// Removing session data
 		$sess_array = array('u_id' => '');
 		$this->session->unset_userdata('session_data', $sess_array);
@@ -84,26 +90,26 @@ class Login extends CI_Controller {
 		$this->session->set_flashdata('successmessage', 'Successfully Logged out !');
 		redirect('login');
 	}
-	public function forgetpassword() 
+	public function forgetpassword()
 	{
 		$this->load->view('forgetpassword');
 	}
 	public function forgetpassword_action()
-    {
+	{
 		$this->load->library('form_validation');
 		$this->form_validation->set_rules('username', 'Username/Email', 'required');
 		if ($this->form_validation->run() == FALSE) {
 			$this->session->set_flashdata('warningmessage', 'Username / Email cant be empty.');
 			redirect('login/forgetpassword');
 		} else {
-			$username = $this->input->post('username'); 
+			$username = $this->input->post('username');
 			$this->load->database();
 			$this->db->where('u_username', $username);
 			$this->db->or_where('u_email', $username);
 			$query = $this->db->get('login');
 			$user = $query->row();
-			if ($user->u_id!='') {
-				$reset_token = bin2hex(random_bytes(32)); 
+			if ($user->u_id != '') {
+				$reset_token = bin2hex(random_bytes(32));
 				$expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 				$this->db->where('u_id', $user->u_id);
 				$this->db->update('login', [
@@ -111,14 +117,14 @@ class Login extends CI_Controller {
 					'u_reset_expires_at' => $expires_at
 				]);
 				$reset_link = base_url("login/changepassword/$reset_token");
-				$this->load->model('emailsms_model');	
-				$gettemplate = $this->db->select('*')->from('email_template')->where('et_name','resetpassword')->get()->result_array();
-				if(!empty($gettemplate)) {
-					$this->load->model('emailsms_model');	
+				$this->load->model('emailsms_model');
+				$gettemplate = $this->db->select('*')->from('email_template')->where('et_name', 'resetpassword')->get()->result_array();
+				if (!empty($gettemplate)) {
+					$this->load->model('emailsms_model');
 					$template = $gettemplate[0]['et_body'];
 					$template = str_replace("{{link}}", $reset_link, $template);
-					$emailresp = $this->emailsms_model->sendemail($user->u_email,$gettemplate[0]['et_subject'],$template);
-					if($emailresp) {
+					$emailresp = $this->emailsms_model->sendemail($user->u_email, $gettemplate[0]['et_subject'], $template);
+					if ($emailresp) {
 						$this->session->set_flashdata('successmessage', 'Password reset link has been sent to your email.');
 						redirect('login');
 					} else {
@@ -133,9 +139,9 @@ class Login extends CI_Controller {
 				$this->session->set_flashdata('warningmessage', 'Username or Email not found.');
 				redirect('login');
 			}
-    	}
+		}
 	}
-	
+
 	public function changepassword($token = null)
 	{
 		$this->load->database();
@@ -143,7 +149,7 @@ class Login extends CI_Controller {
 			show_404();
 		}
 		$this->db->where('u_reset_token', $token);
-		$this->db->where('u_reset_expires_at >=', date('Y-m-d H:i:s')); 
+		$this->db->where('u_reset_expires_at >=', date('Y-m-d H:i:s'));
 		$query = $this->db->get('login');
 		$user = $query->row();
 		if (!$user) {

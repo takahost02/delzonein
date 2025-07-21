@@ -1,8 +1,10 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Login_model extends CI_Model {
+class Login_model extends CI_Model
+{
 
-    public function check_login($data) {
+    public function check_login($data)
+    {
         $username = $this->input->post('username');
         $password = md5($this->input->post('password'));
 
@@ -43,12 +45,12 @@ class Login_model extends CI_Model {
         return false;
     }
 
-    public function userroles($u_id) { 
-        $userroles = $this->db->select('*')->from('login_roles')->where('lr_u_id', $u_id)->get()->result_array();
-        if (!empty($userroles)) {
-            return $userroles[0];
-        } else {
-            return array();
-        }
+    public function userroles($u_id, $user_type = 'admin')
+    {
+        $this->db->where('lr_u_id', $u_id);
+        $this->db->where('lr_user_type', $user_type);
+        $userroles = $this->db->get('login_roles')->result_array();
+
+        return !empty($userroles) ? $userroles[0] : array();
     }
 }

@@ -69,7 +69,7 @@ class Drivers extends CI_Controller
 
 			// Securely hash password if it's provided
 			if (!empty($input['d_password'])) {
-				$input['d_password'] = md5($input['d_password'], PASSWORD_DEFAULT);
+				$input['d_password'] = password_hash($input['d_password'], PASSWORD_DEFAULT);
 			} else {
 				unset($input['d_password']); // Don't update password if not provided
 			}

@@ -75,7 +75,7 @@ class Drivers extends CI_Controller
 			}
 
 			// Pass the input to the model
-			$response = $this->drivers_model->edit_driver($input);
+			$response = $this->drivers_model->edit_driver($this->input->post());
 
 			if ($response) {
 				$this->session->set_flashdata('successmessage', 'Driver updated successfully..');

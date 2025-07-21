@@ -62,24 +62,29 @@ class Vehiclevendors extends CI_Controller
         $testxss = xssclean($_POST);
         if ($testxss) {
             $input = $this->input->post();
+
+            // Only hash password if a new one is provided
             if (!empty($input['vn_password'])) {
                 $input['vn_password'] = md5($input['vn_password']);
             } else {
-                unset($input['vn_password']);
+                unset($input['vn_password']); // Prevent overwriting with empty or hashed value
             }
+
             $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
+
             if ($response) {
-                $this->session->set_flashdata('successmessage', 'vehiclevendor updated successfully..');
+                $this->session->set_flashdata('successmessage', 'Vehicle vendor updated successfully.');
                 redirect('vehiclevendors');
             } else {
-                $this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
+                $this->session->set_flashdata('warningmessage', 'Something went wrong. Try again.');
                 redirect('vehiclevendors');
             }
         } else {
-            $this->session->set_flashdata('warningmessage', 'Error Your input are not allowed.Please try again');
+            $this->session->set_flashdata('warningmessage', 'Error! Your input is not allowed. Please try again.');
             redirect('vehiclevendors');
         }
     }
+
 
     public function deletevehiclevendor()
     {

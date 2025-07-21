@@ -34,7 +34,7 @@
           </div>
 
           <div class="col-sm-6 col-md-3">
-            <label class="form-label">Comtact Person Name<span class="form-required">*</span></label>
+            <label class="form-label">Contact Person Name<span class="form-required">*</span></label>
             <div class="form-group">
               <input type="text" name="vn_contact_person" required id="vn_contact_person" class="form-control" placeholder="Comtact Person Name" value="<?php echo (isset($vehiclevendordetails)) ? $vehiclevendordetails[0]['vn_contact_person'] : '' ?>">
             </div>

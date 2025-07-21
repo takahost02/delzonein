@@ -41,11 +41,10 @@ class Vehiclevendors_model extends CI_Model
         return $this->db->select('*')->from('vehicle_vendors')->where('vn_is_active', 1)->order_by('vn_id', 'desc')->get()->result_array();
     }
 
-    public function get_vehiclevendordetails($id)
+    public function get_vehiclevendordetails($vn_id)
     {
-        return $this->db->where('vn_id', $id)->get('vehicle_vendors')->row();
+        return $this->db->select('*')->from('vehicle_vendors')->where('vn_id', $vn_id)->get()->result_array();
     }
-
 
     public function edit_vehiclevendor()
     {

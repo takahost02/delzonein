@@ -66,7 +66,7 @@ class Vehiclevendors extends CI_Controller
             if (!empty($input['vn_password'])) {
                 $input['vn_password'] = md5($input['vn_password']);
             } else {
-                unset($input['vn_password']); // Prevent overwriting with empty or hashed value
+                unset($input['vn_password']);
             }
 
 

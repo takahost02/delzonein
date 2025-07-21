@@ -72,8 +72,6 @@ class Vehiclevendors extends CI_Controller
 
         $input = $this->input->post();
 
-        echo "Input before password handling:\n";
-        print_r($input);
 
         // Debug password handling
         if (!empty($input['vn_password'])) {
@@ -83,9 +81,6 @@ class Vehiclevendors extends CI_Controller
             unset($input['vn_password']);
             echo "No new password provided. Using existing password.\n";
         }
-
-        echo "Input sent to model:\n";
-        print_r($input);
 
         $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
 

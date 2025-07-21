@@ -67,17 +67,7 @@ class Drivers extends CI_Controller
 		if ($testxss) {
 			$input = $this->input->post();
 
-			// Hash password with md5 only if it's not already an md5 hash
-			if (!empty($input['d_password'])) {
-				// Check if the password is already in md5 format
-				if (!preg_match('/^[a-f0-9]{32}$/i', $input['d_password'])) {
-					$input['d_password'] = md5($input['d_password']);
-				}
-			} else {
-				unset($input['d_password']); // Keep old one if not provided
-			}
-
-			$response = $this->drivers_model->edit_driver($input); // use modified $input
+			$response = $this->drivers_model->edit_driver($input);
 
 			if ($response) {
 				$this->session->set_flashdata('successmessage', 'Driver updated successfully..');

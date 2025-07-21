@@ -28,14 +28,13 @@ class Vehiclevendors extends CI_Controller
     public function insertvehiclevendor()
     {
         $testxss = true;
+
         if ($testxss) {
             $input = $this->input->post();
-            if (!empty($input['vn_password'])) {
-                $input['vn_password'] = md5($input['vn_password']);
-            } else {
-                unset($input['vn_password']);
-            }
+
+            // Password hashing is now handled in the model
             $response = $this->vehiclevendors_model->add_vehiclevendors($input);
+
             if ($response) {
                 $this->session->set_flashdata('successmessage', 'New vehiclevendor added successfully..');
                 redirect('vehiclevendors');
@@ -49,6 +48,7 @@ class Vehiclevendors extends CI_Controller
             redirect('vehiclevendors/addvehiclevendors');
         }
     }
+
 
     public function editvehiclevendor()
     {

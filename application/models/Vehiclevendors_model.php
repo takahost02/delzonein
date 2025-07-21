@@ -48,23 +48,17 @@ class Vehiclevendors_model extends CI_Model
 
     public function edit_vehiclevendor()
     {
-        if (!empty($_FILES)) {
-            $config['upload_path'] = 'assets/uploads/';
+        if (!empty($_FILES['file']['name'])) {
+            $config['upload_path']   = 'assets/uploads/';
             $config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
             $this->load->library('upload', $config);
-            if (!empty($_FILES['file']['name'][0])) {
-                $uploadData = '';
-                $this->upload->initialize($config);
-                $_FILES['file']['name']     = $_FILES['file']['name'];
-                $_FILES['file']['type']     = $_FILES['file']['type'];
-                $_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name'];
-                $_FILES['file']['error']     = $_FILES['file']['error'];
-                $_FILES['file']['size']     = $_FILES['file']['size'];
-                if ($this->upload->do_upload('file')) {
-                    $uploadData = $this->upload->data();
-                    $_POST['vn_file'] = $uploadData['file_name'];
-                }
+            $this->upload->initialize($config);
+            if ($this->upload->do_upload('file')) {
+                $uploadData = $this->upload->data();
+                $_POST['vn_file'] = $uploadData['file_name'];
             }
+        } else {
+            $_POST['vn_file'] = $this->input->post('old_file');
         }
 
         $_POST['vn_doj'] = reformatDate($_POST['vn_doj']);

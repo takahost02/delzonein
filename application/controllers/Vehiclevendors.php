@@ -67,7 +67,7 @@ class Vehiclevendors extends CI_Controller
             } else {
                 unset($input['vn_password']);
             }
-            $response = $this->vehiclevendors_model->edit_vehiclevendor($this->input->post());
+            $response = $this->vehiclevendors_model->edit_vehiclevendor($input);
             if ($response) {
                 $this->session->set_flashdata('successmessage', 'vehiclevendor updated successfully..');
                 redirect('vehiclevendors');

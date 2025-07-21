@@ -67,14 +67,14 @@ class Drivers extends CI_Controller
 		if ($testxss) {
 			$input = $this->input->post();
 
-			// Securely hash password if it's provided
+			// Hash password with md5 if provided
 			if (!empty($input['d_password'])) {
-				$input['d_password'] = password_hash($input['d_password'], PASSWORD_DEFAULT);
+				$input['d_password'] = md5($input['d_password']);
 			} else {
-				unset($input['d_password']); // Don't update password if not provided
+				unset($input['d_password']); // Keep old one if not provided
 			}
 
-			// Pass the modified $input to the model
+			// Pass the input to the model
 			$response = $this->drivers_model->edit_driver($input);
 
 			if ($response) {
@@ -89,6 +89,7 @@ class Drivers extends CI_Controller
 			redirect('drivers');
 		}
 	}
+
 
 
 	public function deletedriver()

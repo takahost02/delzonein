@@ -31,23 +31,33 @@ class Vehiclevendors extends CI_Controller
 
         if ($testxss) {
             $input = $this->input->post();
+            $this->vehiclevendors_model->add_vehiclevendors($input); // original model call
 
-            // Password hashing is now handled in the model
-            $response = $this->vehiclevendors_model->add_vehiclevendors($input);
+            // Get last inserted vendor ID
+            $vendor_id = $this->db->insert_id();
 
-            if ($response) {
-                $this->session->set_flashdata('successmessage', 'New vehiclevendor added successfully..');
-                redirect('vehiclevendors');
+            if ($vendor_id) {
+                $role_data = array(
+                    'lr_u_id' => $vendor_id,
+                    'lr_user_type' => 'vendor',
+                    'lr_vehiclevendors' => 1,
+                    'lr_vehiclevendors_add' => 1,
+                    'lr_vehiclevendors_del' => 1,
+                    'lr_vech_list' => 1
+                    // Add more default vendor permissions if needed
+                );
+                $this->db->insert('login_roles', $role_data);
             }
+
+            $this->session->set_flashdata('successmessage', 'New vehiclevendor added successfully..');
+            redirect('vehiclevendors');
         } else {
             $errormsg = preg_replace("/\r|\n/", "", trim(str_replace('.', ',', strip_tags(validation_errors()))));
-            if (!$testxss) {
-                $errormsg = 'Error Your input are not allowed.Please try again';
-            }
             $this->session->set_flashdata('warningmessage', $errormsg);
             redirect('vehiclevendors/addvehiclevendors');
         }
     }
+
 
 
     public function editvehiclevendor()

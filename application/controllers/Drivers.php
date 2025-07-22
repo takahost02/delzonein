@@ -31,28 +31,39 @@ class Drivers extends CI_Controller
 		$this->form_validation->set_rules('d_mobile', 'Mobile', 'required|trim');
 		$this->form_validation->set_rules('d_address', 'Address', 'required|trim');
 		$this->form_validation->set_rules('d_age', 'Age', 'required|trim');
-		$this->form_validation->set_rules('d_licenseno', 'License Number', 'required|trim');
 		$this->form_validation->set_rules('d_license_expdate', 'License Exp Date', 'required|trim');
-		$this->form_validation->set_rules('d_total_exp', 'Total Experiance', 'required|trim');
+		$this->form_validation->set_rules('d_total_exp', 'Total Experience', 'required|trim');
 		$this->form_validation->set_rules('d_doj', 'Date of Joining', 'required|trim');
 		$this->form_validation->set_rules('d_password', 'Password', 'required|trim');
-		$testxss = true;
-		if ($this->form_validation->run() == TRUE && $testxss) {
+
+		if ($this->form_validation->run() == TRUE) {
 			$input = $this->input->post();
-			$response = $this->drivers_model->add_drivers($input);
-			if ($response) {
-				$this->session->set_flashdata('successmessage', 'New driver added successfully..');
-				redirect('drivers');
+			$this->drivers_model->add_drivers($input); // original model call
+
+			// Get last inserted driver ID
+			$driver_id = $this->db->insert_id();
+
+			if ($driver_id) {
+				$role_data = array(
+					'lr_u_id' => $driver_id,
+					'lr_user_type' => 'driver',
+					'lr_trips_list' => 1,
+					'lr_tracking' => 1,
+					'lr_driver_del' => 1
+					// Add other default driver permissions as needed
+				);
+				$this->db->insert('login_roles', $role_data);
 			}
+
+			$this->session->set_flashdata('successmessage', 'New driver added successfully..');
+			redirect('drivers');
 		} else {
 			$errormsg = preg_replace("/\r|\n/", "", trim(str_replace('.', ',', strip_tags(validation_errors()))));
-			if (!$testxss) {
-				$errormsg = 'Error! Your input are not allowed.Please try again';
-			}
 			$this->session->set_flashdata('warningmessage', $errormsg);
 			redirect('drivers/adddrivers');
 		}
 	}
+
 	public function editdriver()
 	{
 		$d_id = $this->uri->segment(3);

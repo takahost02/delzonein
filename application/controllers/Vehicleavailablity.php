@@ -43,9 +43,9 @@ class Vehicleavailablity extends CI_Controller
 		}
 
 		// Extra filter for driver
-		if ($user_type == 'driver') {
-			$this->db->where('trips.t_driver', $user_id);
-		}
+		// if ($user_type == 'driver') {
+		// 	$this->db->where('trips.t_driver', $user_id);
+		// }
 
 		$query = $this->db->get();
 		$vechdata = $query->result_array();

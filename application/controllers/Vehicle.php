@@ -14,6 +14,7 @@ class Vehicle extends CI_Controller
 		$this->load->library('form_validation');
 		$this->load->library('session');
 	}
+	
 	public function index()
 	{
 		$session_data = $this->session->userdata('session_data');
@@ -21,27 +22,37 @@ class Vehicle extends CI_Controller
 		$user_id   = $session_data['u_id'] ?? null;
 		$vehicle_ids = [];
 
-		if ($user_type == 'driver') {
+		if ($user_type === 'driver') {
 			$this->db->select('t_vechicle');
 			$this->db->from('trips');
 			$this->db->where('t_driver', $user_id);
 			$vehicle_ids = array_column($this->db->get()->result_array(), 't_vechicle');
-		} elseif ($user_type == 'vendor') {
+
+			// Show only assigned vehicles
+			$data['vehiclelist'] = !empty($vehicle_ids)
+				? $this->vehicle_model->getall_vehicle($vehicle_ids)
+				: [];
+		} elseif ($user_type === 'vendor') {
 			$this->db->select('v_id');
 			$this->db->from('vehicles');
 			$this->db->where('v_vendor_name', $user_id);
 			$vehicle_ids = array_column($this->db->get()->result_array(), 'v_id');
-		}
 
-		// If no vehicle IDs found, return an empty list
-		if (empty($vehicle_ids)) {
-			$data['vehiclelist'] = [];
+			// Show only vendor's vehicles
+			$data['vehiclelist'] = !empty($vehicle_ids)
+				? $this->vehicle_model->getall_vehicle($vehicle_ids)
+				: [];
+		} elseif ($user_type === 'admin') {
+			// Admin sees all vehicles
+			$data['vehiclelist'] = $this->vehicle_model->getall_vehicle(); // no filter
 		} else {
-			$data['vehiclelist'] = $this->vehicle_model->getall_vehicle($vehicle_ids);
+			// Other roles (if any) — no access
+			$data['vehiclelist'] = [];
 		}
 
 		$this->template->template_render('vehicle_management', $data);
 	}
+
 
 
 

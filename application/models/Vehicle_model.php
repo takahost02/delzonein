@@ -72,17 +72,12 @@ class vehicle_model extends CI_Model
 
 		if (!empty($vehicle_ids)) {
 			$this->db->where_in('vehicles.v_id', $vehicle_ids);
-		} else {
-			// If no IDs provided, return no records
-			$this->db->where('1=0'); // Forces no result
 		}
 
 		$this->db->order_by('v_id', 'desc');
 		$query = $this->db->get();
 		return $query->result_array();
 	}
-
-
 
 	public function get_vehicledetails($v_id)
 	{

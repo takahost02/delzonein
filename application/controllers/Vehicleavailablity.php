@@ -25,7 +25,7 @@ class Vehicleavailablity extends CI_Controller
 			$this->db->where('t_driver', $user_id);
 			$vehicle_ids = array_column($this->db->get()->result_array(), 't_vechicle');
 		} elseif ($user_type == 'vendor') {
-			$this->db->select('v_i');
+			$this->db->select('v_id');
 			$this->db->from('vehicles');
 			$this->db->where('v_vendor_name', $user_id);
 			$vehicle_ids = array_column($this->db->get()->result_array(), 'v_id');

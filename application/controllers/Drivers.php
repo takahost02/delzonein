@@ -16,16 +16,52 @@ class Drivers extends CI_Controller
 
 	public function index()
 	{
-		$data['driverslist'] = $this->drivers_model->getall_drivers();
+		$session_data = $this->session->userdata('session_data');
+		$user_type = $session_data['user_type'] ?? null;
+		$user_id   = $session_data['u_id'] ?? null;
+
+		$driver_ids = [];
+
+		if ($user_type === 'driver') {
+			// Driver sees only themselves
+			$driver_ids = [$user_id];
+		} elseif ($user_type === 'vendor') {
+			// Step 1: Get vehicle IDs owned by vendor
+			$this->db->select('v_id');
+			$this->db->from('vehicles');
+			$this->db->where('v_vendor_name', $user_id);
+			$vehicle_ids = array_column($this->db->get()->result_array(), 'v_id');
+
+			if (!empty($vehicle_ids)) {
+				// Step 2: Get driver IDs from trips using those vehicles
+				$this->db->select('t_driver');
+				$this->db->from('trips');
+				$this->db->where_in('t_vehicle', $vehicle_ids);
+				$driver_ids = array_unique(array_column($this->db->get()->result_array(), 't_driver'));
+			}
+		} elseif ($user_type === 'admin') {
+			// Admin sees all drivers
+			$data['driverslist'] = $this->drivers_model->getall_drivers(); // No filter
+			$this->template->template_render('drivers_management', $data);
+			return;
+		}
+
+		// For driver or vendor, use filtered list
+		$data['driverslist'] = !empty($driver_ids)
+			? $this->drivers_model->getall_drivers($driver_ids)
+			: [];
+
 		$this->template->template_render('drivers_management', $data);
 	}
+
+
 	public function adddrivers()
 	{
 		$this->template->template_render('drivers_add');
 	}
 	public function insertdriver()
 	{
-		$this->form_validation->set_rules('d_licenseno', 'License Number', 'required|trim|is_unique[vehicles.v_registration_no]');
+		$this->form_validation->set_rules('d_licenseno', 'License Number', 'required|trim|is_unique[drivers.v_registration_no]');
 		$this->form_validation->set_message('is_unique', '%s is already exist');
 		$this->form_validation->set_rules('d_name', 'Name', 'required|trim');
 		$this->form_validation->set_rules('d_mobile', 'Mobile', 'required|trim');
@@ -91,9 +127,9 @@ class Drivers extends CI_Controller
 					'lr_maintenace_add' => 1,
 					'lr_vech_availablity' => 1,
 					'lr_parts' => 1,
-					'lr_vehiclevendors' => 1,
-					'lr_vehiclevendors_add' => 1,
-					'lr_vehiclevendors_del' => 1,
+					'lr_drivervendors' => 1,
+					'lr_drivervendors_add' => 1,
+					'lr_drivervendors_del' => 1,
 					'lr_mechanic' => 1,
 					'lr_mechanic_add' => 1,
 					'lr_mechanic_del' => 1,

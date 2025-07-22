@@ -53,10 +53,19 @@ class Drivers_model extends CI_Model
 		return $this->db->insert('drivers', $data);
 	}
 
-	public function getall_drivers()
+	public function getall_drivers($driver_ids = [])
 	{
-		return $this->db->select('*')->from('drivers')->order_by('d_id', 'desc')->get()->result_array();
+		$this->db->select('*');
+		$this->db->from('drivers');
+
+		if (!empty($driver_ids)) {
+			$this->db->where_in('d_id', $driver_ids);
+		}
+
+		$this->db->order_by('d_id', 'desc');
+		return $this->db->get()->result_array();
 	}
+
 	public function get_driverdetails($d_id)
 	{
 		return $this->db->select('*')->from('drivers')->where('d_id', $d_id)->get()->result_array();

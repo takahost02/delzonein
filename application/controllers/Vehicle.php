@@ -1,52 +1,71 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-class Vehicle extends CI_Controller {
+defined('BASEPATH') or exit('No direct script access allowed');
+class Vehicle extends CI_Controller
+{
 	function __construct()
-    {
-          parent::__construct();
-          $this->load->database();
-          $this->load->model('vehicle_model');
-		  $this->load->model('vehiclevendors_model');
-          $this->load->model('incomexpense_model');
-          $this->load->model('geofence_model');
-          $this->load->helper(array('form', 'url','string'));
-          $this->load->library('form_validation');
-          $this->load->library('session');
-    }
+	{
+		parent::__construct();
+		$this->load->database();
+		$this->load->model('vehicle_model');
+		$this->load->model('vehiclevendors_model');
+		$this->load->model('incomexpense_model');
+		$this->load->model('geofence_model');
+		$this->load->helper(array('form', 'url', 'string'));
+		$this->load->library('form_validation');
+		$this->load->library('session');
+	}
 	public function index()
 	{
-		$data['vehiclelist'] = $this->vehicle_model->getall_vehicle();
-		$this->template->template_render('vehicle_management',$data);
+		$session_data = $this->session->userdata('session_data');
+		$user_type = $session_data['user_type'] ?? null;
+		$user_id   = $session_data['u_id'] ?? null;
+		$vehicle_ids = [];
+
+		if ($user_type == 'driver') {
+			$this->db->select('t_vechicle');
+			$this->db->from('trips');
+			$this->db->where('t_driver', $user_id);
+			$vehicle_ids = array_column($this->db->get()->result_array(), 't_vechicle');
+		} elseif ($user_type == 'vendor') {
+			$this->db->select('v_id');
+			$this->db->from('vehicles');
+			$this->db->where('v_vendor_name', $user_id);
+			$vehicle_ids = array_column($this->db->get()->result_array(), 'v_id');
+		}
+
+		$data['vehiclelist'] = $this->vehicle_model->getall_vehicle($vehicle_ids);
+		$this->template->template_render('vehicle_management', $data);
 	}
+
 	public function addvehicle()
 	{
 		$data['trip_statuses'] = $this->db->get('trip_status_master')->result();
 		$data['v_group'] = $this->vehicle_model->get_vehiclegroup();
 		$data['vehiclevendors'] = $this->vehiclevendors_model->getall_activevehiclevendors();
-		$data['traccar_list'] = json_decode(traccar_call('api/devices','','GET'),true);
-		$this->template->template_render('vehicle_add',$data);
+		$data['traccar_list'] = json_decode(traccar_call('api/devices', '', 'GET'), true);
+		$this->template->template_render('vehicle_add', $data);
 	}
 	public function insertvehicle()
 	{
-		$this->form_validation->set_rules('v_registration_no','Registration Number','required|trim|is_unique[vehicles.v_registration_no]');
+		$this->form_validation->set_rules('v_registration_no', 'Registration Number', 'required|trim|is_unique[vehicles.v_registration_no]');
 		$this->form_validation->set_message('is_unique', '%s is already exist');
-		$this->form_validation->set_rules('v_model','Model','required|trim');
-		$this->form_validation->set_rules('v_chassis_no','Chassis No','required|trim');
-        $this->form_validation->set_rules('v_engine_no', 'Engine No', 'required|trim');
-		$this->form_validation->set_rules('v_manufactured_by','Manufactured By','required|trim');
-		$this->form_validation->set_rules('v_type','Vehicle Type','required|trim');
-		$this->form_validation->set_rules('v_color','Vehicle Color','required|trim');
-		if($this->form_validation->run()==TRUE){
+		$this->form_validation->set_rules('v_model', 'Model', 'required|trim');
+		$this->form_validation->set_rules('v_chassis_no', 'Chassis No', 'required|trim');
+		$this->form_validation->set_rules('v_engine_no', 'Engine No', 'required|trim');
+		$this->form_validation->set_rules('v_manufactured_by', 'Manufactured By', 'required|trim');
+		$this->form_validation->set_rules('v_type', 'Vehicle Type', 'required|trim');
+		$this->form_validation->set_rules('v_color', 'Vehicle Color', 'required|trim');
+		if ($this->form_validation->run() == TRUE) {
 			$response = $this->vehicle_model->add_vehicle($this->input->post());
-			if($response) {
+			if ($response) {
 				$this->session->set_flashdata('successmessage', 'New vehicle added successfully..');
-			    redirect('vehicle');
+				redirect('vehicle');
 			} else {
 				$this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
 				redirect('vehicle');
 			}
-		} else	{
-			$this->session->set_flashdata('warningmessage',preg_replace( "/\r|\n/", "", trim(str_replace('.',',',strip_tags(validation_errors())))));
+		} else {
+			$this->session->set_flashdata('warningmessage', preg_replace("/\r|\n/", "", trim(str_replace('.', ',', strip_tags(validation_errors())))));
 			redirect('vehicle/addvehicle');
 		}
 	}
@@ -57,55 +76,54 @@ class Vehicle extends CI_Controller {
 		$v_id = decodeId($this->uri->segment(3));
 		$data['v_group'] = $this->vehicle_model->get_vehiclegroup();
 		$data['vehicledetails'] = $this->vehicle_model->get_vehicledetails($v_id);
-		$data['traccar_list'] = json_decode(traccar_call('api/devices','','GET'),true);
-		$this->template->template_render('vehicle_add',$data);
+		$data['traccar_list'] = json_decode(traccar_call('api/devices', '', 'GET'), true);
+		$this->template->template_render('vehicle_add', $data);
 	}
 
 	public function updatevehicle()
 	{
-		if(!empty($_FILES)) {
+		if (!empty($_FILES)) {
 			$config['upload_path'] = 'assets/uploads/';
-			$config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx'; 
-			$this->load->library('upload', $config); 
-			if(!empty($_FILES['file']['name'][0])){ 
+			$config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|docx';
+			$this->load->library('upload', $config);
+			if (!empty($_FILES['file']['name'][0])) {
 				$uploadData = '';
-				$this->upload->initialize($config); 
-				$_FILES['file']['name']     = $_FILES['file']['name']; 
-				$_FILES['file']['type']     = $_FILES['file']['type']; 
-				$_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name']; 
-				$_FILES['file']['error']     = $_FILES['file1']['error']; 
-				$_FILES['file']['size']     = $_FILES['file']['size']; 
-				if($this->upload->do_upload('file')){ 
+				$this->upload->initialize($config);
+				$_FILES['file']['name']     = $_FILES['file']['name'];
+				$_FILES['file']['type']     = $_FILES['file']['type'];
+				$_FILES['file']['tmp_name'] = $_FILES['file']['tmp_name'];
+				$_FILES['file']['error']     = $_FILES['file1']['error'];
+				$_FILES['file']['size']     = $_FILES['file']['size'];
+				if ($this->upload->do_upload('file')) {
 					$uploadData = $this->upload->data();
 					$_POST['v_file'] = $uploadData['file_name'];
 				}
-			} 
-			if(!empty($_FILES['file1']['name'][1])){ 
+			}
+			if (!empty($_FILES['file1']['name'][1])) {
 				$uploadData = '';
-				$this->upload->initialize($config); 
-				$_FILES['file']['name']     = $_FILES['file1']['name']; 
-				$_FILES['file']['type']     = $_FILES['file1']['type']; 
-				$_FILES['file']['tmp_name'] = $_FILES['file1']['tmp_name']; 
-				$_FILES['file']['error']     = $_FILES['file1']['error']; 
-				$_FILES['file']['size']     = $_FILES['file1']['size']; 
-				if($this->upload->do_upload('file1')){ 
+				$this->upload->initialize($config);
+				$_FILES['file']['name']     = $_FILES['file1']['name'];
+				$_FILES['file']['type']     = $_FILES['file1']['type'];
+				$_FILES['file']['tmp_name'] = $_FILES['file1']['tmp_name'];
+				$_FILES['file']['error']     = $_FILES['file1']['error'];
+				$_FILES['file']['size']     = $_FILES['file1']['size'];
+				if ($this->upload->do_upload('file1')) {
 					$uploadData = $this->upload->data();
 					$_POST['v_file1'] = $uploadData['file_name'];
 				}
-			} 
+			}
 		}
-		
+
 		$testxss = true;
-		if($testxss){
+		if ($testxss) {
 			$response = $this->vehicle_model->edit_vehicle($this->input->post());
-				if($response) {
-					$this->session->set_flashdata('successmessage', 'Vehicle updated successfully..');
-				    redirect('vehicle');
-				} else
-				{
-					$this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
-				    redirect('vehicle');
-				}
+			if ($response) {
+				$this->session->set_flashdata('successmessage', 'Vehicle updated successfully..');
+				redirect('vehicle');
+			} else {
+				$this->session->set_flashdata('warningmessage', 'Something went wrong..Try again');
+				redirect('vehicle');
+			}
 		} else {
 			$this->session->set_flashdata('warningmessage', 'Error! Your input are not allowed.Please try again');
 			redirect('vehicle');
@@ -119,7 +137,7 @@ class Vehicle extends CI_Controller {
 		$vgeofence = $this->geofence_model->getvechicle_geofence($v_id);
 		//$vincomexpense = $this->incomexpense_model->getvechicle_incomexpense($v_id);
 		$geofence_events = $this->geofence_model->countvehiclengeofence_events($v_id);
-		if(isset($vehicledetails[0]['v_id'])) {
+		if (isset($vehicledetails[0]['v_id'])) {
 			$data['vehicledetails'] = $vehicledetails[0];
 			$data['bookings'] = $bookings;
 			$data['vechicle_geofence'] = $vgeofence;
@@ -127,12 +145,13 @@ class Vehicle extends CI_Controller {
 			$data['geofence_events'] = $geofence_events;
 			$data['maintenancelist'] = $this->servicehistory($v_id);
 			$data['group'] = $this->db->query("SELECT gr_name FROM vehicle_group WHERE gr_id = ?", array($vehicledetails[0]['v_group']))->row()->gr_name ?? null;
-			$this->template->template_render('vehicle_view',$data);
+			$this->template->template_render('vehicle_view', $data);
 		} else {
 			$this->template->template_render('pagenotfound');
 		}
 	}
-	public function servicehistory($v_id) { 
+	public function servicehistory($v_id)
+	{
 		$this->db->select("vehicle_maintenance.*, vehicles.v_name, vehicle_maintenance_vendor.mv_name, vehicle_maintenance_mechanic.mm_name");
 		$this->db->from('vehicle_maintenance');
 		$this->db->join('vehicles', 'vehicle_maintenance.m_v_id = vehicles.v_id', 'LEFT');
@@ -167,18 +186,18 @@ class Vehicle extends CI_Controller {
 	public function vehiclegroup()
 	{
 		$data['vehiclegroup'] = $this->vehicle_model->get_vehiclegroup();
-		$this->template->template_render('vehicle_group',$data);
+		$this->template->template_render('vehicle_group', $data);
 	}
 	public function vehiclegroup_delete()
-	{ 
+	{
 		$gr_id = decodeId($this->input->post('del_id'));
 		$returndata = $this->vehicle_model->vehiclegroup_delete($gr_id);
-		if($returndata) {
+		if ($returndata) {
 			$this->session->set_flashdata('successmessage', 'Vehicle type deleted successfully..');
 			redirect('vehicle/vehiclegroup');
 		} else {
 			$this->session->set_flashdata('warningmessage', 'Error..! Some vechicle are mapped with this group. Please remove from vechicle management');
-		    redirect('vehicle/vehiclegroup');
+			redirect('vehicle/vehiclegroup');
 		}
 	}
 	public function addgroup()
@@ -211,8 +230,8 @@ class Vehicle extends CI_Controller {
 	public function deletevehicle()
 	{
 		$v_id = $this->input->post('del_id');
-		$deleteresp = $this->db->delete('vehicles', array('v_id' => $v_id)); 
-		if($deleteresp) {
+		$deleteresp = $this->db->delete('vehicles', array('v_id' => $v_id));
+		if ($deleteresp) {
 			$this->session->set_flashdata('successmessage', 'Vehicle deleted successfully..');
 		} else {
 			$this->session->set_flashdata('warningmessage', 'Unexpected error..Try again');
@@ -264,7 +283,7 @@ class Vehicle extends CI_Controller {
 	public function vehicleroute_delete()
 	{
 		$t_id = $this->input->post('del_id');
-		$deleteresp = $this->db->delete('vehicle_route', array('vr_id' => $t_id)); 
+		$deleteresp = $this->db->delete('vehicle_route', array('vr_id' => $t_id));
 		if ($deleteresp) {
 			$this->session->set_flashdata('successmessage', 'Route deleted successfully.');
 			redirect('vehicle/vehicleroute');
@@ -286,62 +305,63 @@ class Vehicle extends CI_Controller {
 		}
 	}
 
-	public function download_template() {
-        $this->load->helper('download');
-        $file_path = './uploads/templates/vehicle.csv';
-        if (file_exists($file_path)) {
-            $data = file_get_contents($file_path); // Read the file's contents
-            force_download('vehicle_template.csv', $data);
-        } else {
-            $this->session->set_flashdata('message', 'The template file does not exist.');
-            redirect('vehicle');
-        }
-    }
-
-	public function import_csv() {
-        $config['upload_path'] = './uploads/';
-        $config['allowed_types'] = 'csv';
-		$this->load->library('upload', $config);
-        $this->upload->initialize($config);
-        if ($this->upload->do_upload('file')) {
-            $file_data = $this->upload->data();
-            $file_path = $file_data['full_path'];
-            if (($handle = fopen($file_path, 'r')) !== FALSE) {
-                fgetcsv($handle); // Skip the header row
-                while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
-                    $this->db->insert('vehicles', [
-                        'v_registration_no' => $data[0],
-                        'v_name' => $data[1],
-                        'v_model' => $data[2],
-                        'v_chassis_no' => $data[3],
-                        'v_engine_no' => $data[4],
-                        'v_manufactured_by' => $data[5],
-                        'v_type' => $data[6],
-                        'v_color' => $data[7],
-                        'v_mileageperlitre' => $data[8],
-                        'v_is_active' => $data[9],
-                        'v_group' => $data[10],
-                        'v_reg_exp_date' => $data[11],
-                        'v_api_url' => $data[12],
-                        'v_api_username' => $data[13],
-                        'v_api_password' => $data[14],
-                        'v_traccar_id' => $data[15],
-                        'v_file' => $data[16],
-                        'v_file1' => $data[17],
-                        'v_created_by' => $data[18],
-                        'v_created_date' => date('Y-m-d H:i:s'),
-                    ]);
-                }
-                fclose($handle);
-            }
-            unlink($file_path);
-            $this->session->set_flashdata('message', 'CSV data successfully imported.');
+	public function download_template()
+	{
+		$this->load->helper('download');
+		$file_path = './uploads/templates/vehicle.csv';
+		if (file_exists($file_path)) {
+			$data = file_get_contents($file_path); // Read the file's contents
+			force_download('vehicle_template.csv', $data);
+		} else {
+			$this->session->set_flashdata('message', 'The template file does not exist.');
 			redirect('vehicle');
-        } else {
-            $error = $this->upload->display_errors();
-            $this->session->set_flashdata('warningmessage', $error);
-				redirect('vehicle');
-        }
-    }
+		}
+	}
 
+	public function import_csv()
+	{
+		$config['upload_path'] = './uploads/';
+		$config['allowed_types'] = 'csv';
+		$this->load->library('upload', $config);
+		$this->upload->initialize($config);
+		if ($this->upload->do_upload('file')) {
+			$file_data = $this->upload->data();
+			$file_path = $file_data['full_path'];
+			if (($handle = fopen($file_path, 'r')) !== FALSE) {
+				fgetcsv($handle); // Skip the header row
+				while (($data = fgetcsv($handle, 1000, ',')) !== FALSE) {
+					$this->db->insert('vehicles', [
+						'v_registration_no' => $data[0],
+						'v_name' => $data[1],
+						'v_model' => $data[2],
+						'v_chassis_no' => $data[3],
+						'v_engine_no' => $data[4],
+						'v_manufactured_by' => $data[5],
+						'v_type' => $data[6],
+						'v_color' => $data[7],
+						'v_mileageperlitre' => $data[8],
+						'v_is_active' => $data[9],
+						'v_group' => $data[10],
+						'v_reg_exp_date' => $data[11],
+						'v_api_url' => $data[12],
+						'v_api_username' => $data[13],
+						'v_api_password' => $data[14],
+						'v_traccar_id' => $data[15],
+						'v_file' => $data[16],
+						'v_file1' => $data[17],
+						'v_created_by' => $data[18],
+						'v_created_date' => date('Y-m-d H:i:s'),
+					]);
+				}
+				fclose($handle);
+			}
+			unlink($file_path);
+			$this->session->set_flashdata('message', 'CSV data successfully imported.');
+			redirect('vehicle');
+		} else {
+			$error = $this->upload->display_errors();
+			$this->session->set_flashdata('warningmessage', $error);
+			redirect('vehicle');
+		}
+	}
 }

@@ -12,8 +12,9 @@ class Vehicleavailablity extends CI_Controller
 	}
 	public function index()
 	{
-		$user_type = $this->session->userdata('u_user_type');
-		$user_id   = $this->session->userdata('u_id');
+		$session_data = $this->session->userdata('session_data');
+		$user_type = $session_data['user_type'] ?? null;
+		$user_id   = $session_data['u_id'] ?? null;
 
 		$vehicle_ids = [];
 

@@ -4,14 +4,14 @@
           <div class="col-sm-6">
             <h1 class="m-0 text-dark">Vehicle Calendar
             </h1>
-         <?php
-$CI =& get_instance();
-$user_type = $CI->session->userdata('u_user_type');
-$user_id   = $CI->session->userdata('u_id');
-?>
+            <?php
+            $CI = &get_instance();
+            $user_type = $CI->session->userdata('u_user_type');
+            $user_id   = $CI->session->userdata('u_id');
+            ?>
 
-<p>User Type: <?= $user_type; ?></p>
-<p>User ID: <?= $user_id; ?></p>
+            <p>User Type: <?= $user_type; ?></p>
+            <p>User ID: <?= $user_id; ?></p>
 
 
           </div><!-- /.col -->

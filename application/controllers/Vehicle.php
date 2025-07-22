@@ -19,23 +19,29 @@ class Vehicle extends CI_Controller
 		$session_data = $this->session->userdata('session_data');
 		$user_type = $session_data['user_type'] ?? null;
 		$user_id   = $session_data['u_id'] ?? null;
+
 		$vehicle_ids = [];
 
-		if ($user_type == 'driver') {
+		if ($user_type === 'driver') {
 			$this->db->select('t_vechicle');
 			$this->db->from('trips');
 			$this->db->where('t_driver', $user_id);
 			$vehicle_ids = array_column($this->db->get()->result_array(), 't_vechicle');
-		} elseif ($user_type == 'vendor') {
+		} elseif ($user_type === 'vendor') {
 			$this->db->select('v_id');
 			$this->db->from('vehicles');
-			$this->db->where('v_vendor_name', $user_id);
+			$this->db->where('v_vendor_name', $user_id); // Make sure this matches vendor ID
 			$vehicle_ids = array_column($this->db->get()->result_array(), 'v_id');
 		}
 
-		$data['vehiclelist'] = $this->vehicle_model->getall_vehicle($vehicle_ids);
+		// Pass vehicle_ids only if needed
+		$data['vehiclelist'] = $this->vehicle_model->getall_vehicle(
+			($user_type === 'vendor' || $user_type === 'driver') ? $vehicle_ids : null
+		);
+
 		$this->template->template_render('vehicle_management', $data);
 	}
+
 
 	public function addvehicle()
 	{

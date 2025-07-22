@@ -63,13 +63,14 @@ class vehicle_model extends CI_Model
 			return false;
 		}
 	}
-	public function getall_vehicle($vehicle_ids = [])
+	
+	public function getall_vehicle($vehicle_ids = null)
 	{
 		$this->db->select("*");
 		$this->db->from('vehicles');
 		$this->db->join('vehicle_group', 'vehicle_group.gr_id = vehicles.v_group', 'LEFT');
 
-		if (!empty($vehicle_ids)) {
+		if (!empty($vehicle_ids) && is_array($vehicle_ids)) {
 			$this->db->where_in('vehicles.v_id', $vehicle_ids);
 		}
 
@@ -77,6 +78,7 @@ class vehicle_model extends CI_Model
 		$query = $this->db->get();
 		return $query->result_array();
 	}
+
 
 	public function get_vehicledetails($v_id)
 	{

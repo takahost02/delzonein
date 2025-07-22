@@ -81,9 +81,6 @@ class Vehicleavailablity extends CI_Controller
 
 		// Merge trips and maintenance
 		$data['vechavail'] = array_merge($trips, $vehicle_maintenance);
-		$data['login_user_type'] = $user_type;
-		$data['login_user_id'] = $user_id;
-
 		$this->template->template_render('vehicle_availability', $data);
 	}
 }

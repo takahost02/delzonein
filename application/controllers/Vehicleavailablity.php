@@ -25,11 +25,13 @@ class Vehicleavailablity extends CI_Controller
 			$this->db->where('t_driver', $user_id);
 			$vehicle_ids = array_column($this->db->get()->result_array(), 't_vechicle');
 		} elseif ($user_type == 'vendor') {
-			$this->db->select('v_id');
-			$this->db->from('vehicles');
-			$this->db->where('v_vendor_name', $user_id);
-			$vehicle_ids = array_column($this->db->get()->result_array(), 'v_id');
+			$this->db->select('trips.t_vechicle');
+			$this->db->from('trips');
+			$this->db->join('vehicles', 'trips.t_vechicle = vehicles.v_id');
+			$this->db->where('vehicles.v_vendor_name', $user_id);
+			$vehicle_ids = array_column($this->db->get()->result_array(), 't_vechicle');
 		}
+
 
 		// ---- Trips ----
 		$this->db->select("DATE(trips.t_start_date) AS start, DATE(trips.t_end_date) AS end, trips.t_trip_fromlocation, trips.t_trip_tolocation, CONCAT(vehicles.v_registration_no, '-', vehicles.v_name) AS title, 'green' AS color");

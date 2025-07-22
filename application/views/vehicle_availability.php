@@ -4,6 +4,9 @@
           <div class="col-sm-6">
             <h1 class="m-0 text-dark">Vehicle Calendar
             </h1>
+            <p>User Type: <?= $login_user_type; ?></p>
+            <p>User ID: <?= $login_user_id; ?></p>
+
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">

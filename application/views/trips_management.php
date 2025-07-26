@@ -73,10 +73,11 @@
                         <a class="icon" href="<?php echo base_url(); ?>trips/edittrip/<?php echo output(encodeId($trip['t_id'])); ?>">
                           <i class="fa fa-edit"></i>
                         </a> | 
-                        <a class="icon" href="<?php echo base_url(); ?>trips/details/<?php echo output(encodeId($trip['t_id'])); ?>">
+                        
+                      <?php } ?>
+                      <a class="icon" href="<?php echo base_url(); ?>trips/details/<?php echo output(encodeId($trip['t_id'])); ?>">
                           <i class="fa fa-eye"></i>
                         </a>
-                      <?php } ?>
                       <?php if (userpermission('lr_booking_del')) { ?> |
                         <a data-toggle="modal" href="" onclick="confirmation('<?php echo base_url(); ?>trips/deletetrip','<?php echo output($trip['t_id']); ?>')" data-target="#deleteconfirm" class="icon text-danger">
                           <i class="fa fa-trash"></i>

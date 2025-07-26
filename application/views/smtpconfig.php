@@ -48,7 +48,7 @@
 
                    <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-control" required="true" value="<?php echo output(isset($smtpconfig[0]['smtp_pwd'])?$smtpconfig[0]['smtp_pwd']:''); ?>" id="s_inovicess_prefix" name="smtp_pwd" placeholder="Enter SMTP Password">
+                    <input type="text" class="form-control" required="true" value="<?php echo output(isset($smtpconfig[0]['smtp_pwd'])?$smtpconfig[0]['smtp_pwd']:''); ?>" id="s_inovicess_prefix" name="smtp_pwd" placeholder="Enter SMTP Password">
                   </div>
 
                    <div class="form-group">

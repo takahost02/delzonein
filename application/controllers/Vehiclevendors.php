@@ -30,16 +30,16 @@ class Vehiclevendors extends CI_Controller
             $vendor_ids = [$user_id];
             $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids);
         } elseif ($user_type === 'driver') {
-            // Step 1: Join trips and vehicles to get vendor names where the driver was involved
+            // Step 1: Join trips and vehicles to get v_vendor_name where the driver was involved
             $this->db->select('vehicles.v_vendor_name');
             $this->db->from('trips');
             $this->db->join('vehicles', 'vehicles.v_id = trips.t_vehicle');
             $this->db->where('trips.t_driver', $user_id);
 
-            // Step 2: Get unique vendor IDs from the result
-            $vendor_ids = array_unique(array_column($this->db->get()->result_array(), 'v_vendor_name'));
+            $results = $this->db->get()->result_array();
+            $vendor_ids = array_unique(array_column($results, 'v_vendor_name'));
 
-            // Step 3: Get only those vendors
+            // Only get vendors if IDs are valid
             $data['vehiclevendorslist'] = !empty($vendor_ids)
                 ? $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids)
                 : [];
@@ -50,6 +50,7 @@ class Vehiclevendors extends CI_Controller
 
         $this->template->template_render('vehiclevendors_management', $data);
     }
+
 
 
     public function addvehiclevendors()

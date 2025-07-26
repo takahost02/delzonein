@@ -16,9 +16,46 @@ class Vehiclevendors extends CI_Controller
 
     public function index()
     {
-        $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors();
+        $session_data = $this->session->userdata('session_data');
+        $user_type = $session_data['user_type'] ?? null;
+        $user_id   = $session_data['u_id'] ?? null;
+
+        if ($user_type === 'admin') {
+            // Admin sees all vehicle vendors
+            $driver_ids = [$user_id];
+        } elseif ($user_type === 'vendor') {
+            // Vendor sees only their own vendor record
+            $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors([$user_id]);
+        } elseif ($user_type === 'driver') {
+            // Driver sees vendors related to their trips
+
+            // Step 1: Find vehicle IDs from trips of this driver
+            $this->db->select('t_vehicle');
+            $this->db->from('trips');
+            $this->db->where('t_driver', $user_id);
+            $vehicle_ids = array_column($this->db->get()->result_array(), 't_vehicle');
+
+            $vendor_ids = [];
+
+            if (!empty($vehicle_ids)) {
+                // Step 2: Find vendors of those vehicles
+                $this->db->select('v_vendor_name');
+                $this->db->from('vehicles');
+                $this->db->where_in('v_id', $vehicle_ids);
+                $vendor_ids = array_unique(array_column($this->db->get()->result_array(), 'v_vendor_name'));
+            }
+
+            $data['vehiclevendorslist'] = !empty($vendor_ids)
+                ? $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids)
+                : [];
+        } else {
+            // Other user types see nothing
+            $data['vehiclevendorslist'] = [];
+        }
+
         $this->template->template_render('vehiclevendors_management', $data);
     }
+
 
     public function addvehiclevendors()
     {

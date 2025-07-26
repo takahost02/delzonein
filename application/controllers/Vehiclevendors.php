@@ -39,10 +39,7 @@ class Vehiclevendors extends CI_Controller
             $results = $this->db->get()->result_array();
             $vendor_ids = array_unique(array_column($results, 'v_vendor_name'));
 
-            // Only get vendors if IDs are valid
-            $data['vehiclevendorslist'] = !empty($vendor_ids)
-                ? $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids)
-                : [];
+            $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids);
         } else {
             // Other user types see nothing
             $data['vehiclevendorslist'] = [];

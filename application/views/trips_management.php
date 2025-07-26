@@ -67,7 +67,7 @@
                     <?php echo ($trip['t_bookingfrom']!='')?'('.output($trip['t_bookingfrom']).')':''; ?>
                     
                   </td>
-                  <?php if (userpermission('lr_trips_list_edit') || userpermission('lr_booking_del')) { ?>
+                  
                     <td>
                       <?php if (userpermission('lr_trips_list_edit')) { ?>
                         <a class="icon" href="<?php echo base_url(); ?>trips/edittrip/<?php echo output(encodeId($trip['t_id'])); ?>">
@@ -84,7 +84,7 @@
                         </a>
                       <?php } ?>
                     </td>
-                  <?php } ?>
+                  
                 </tr>
             <?php } } ?>
           </tbody>

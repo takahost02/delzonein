@@ -110,16 +110,11 @@
         </div>
         <input type="hidden" id="vn_created_by" name="vn_created_by" value="<?php echo output($this->session->userdata['session_data']['u_id']); ?>">
         <input type="hidden" id="vn_created_date" name="vn_created_date" value="<?php echo date('Y-m-d h:i:s'); ?>">
+        <?php if(userpermission('lr_vehiclevendors_add')) { ?>
         <div class="card-footer text-right">
           <button type="submit" class="btn btn-primary"> <?php echo (isset($vehiclevendordetails)) ? 'Update Vehicle Vendor' : 'Add Vehicle Vendor' ?></button>
-
-          <!-- <?php if (!isset($vehiclevendordetails)) { ?>
-                  <div class="float-left">
-                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importModal">Bulk Import Conductors</button>
-                  <a href="<?php echo site_url('conductors/download_template'); ?>">Download CSV Template</a>
-                  </div>
-                  <?php } ?> -->
         </div>
+        <?php }  ?>
     </form>
   </div>
 </section>

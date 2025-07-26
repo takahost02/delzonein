@@ -75,7 +75,7 @@ class Vehiclevendors extends CI_Controller
                 $role_data = array(
                     'lr_u_id' => $vendor_id,
                     'lr_user_type' => 'vendor',
-                    					'lr_vech_list' => 1,
+                    'lr_vech_list' => 1,
 					'lr_vech_list_view' => 1,
 					'lr_drivers_list' => 1,
 					'lr_trips_list' => 1,

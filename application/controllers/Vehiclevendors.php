@@ -23,35 +23,35 @@ class Vehiclevendors extends CI_Controller
         $vendor_ids = [];
 
         if ($user_type === 'admin') {
-            // Admin sees all vehicle vendors
+            // Admin sees all vendors
             $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors();
         } elseif ($user_type === 'vendor') {
-            // Vendor sees only their own vendor record
+            // Vendor sees only their own vehicles
             $vendor_ids = [$user_id];
             $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids);
         } elseif ($user_type === 'driver') {
-            // Step 1: Join trips and vehicles to get vendor IDs
+            // For driver, find vendor_ids based on trips they've driven
             $this->db->select('vehicles.v_vendor_name');
             $this->db->from('trips');
-            $this->db->join('vehicles', 'vehicles.v_id = trips.t_vehicle', 'left');
+            $this->db->join('vehicles', 'vehicles.v_id = trips.t_vechicle'); // Fix column name: t_vechicle
             $this->db->where('trips.t_driver', $user_id);
 
             $results = $this->db->get()->result_array();
             $vendor_ids = array_unique(array_column($results, 'v_vendor_name'));
 
-            // Ensure all IDs are valid integers
-            $vendor_ids = array_filter($vendor_ids, function ($val) {
-                return is_numeric($val) && $val > 0;
-            });
-
-            $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids);
+            // Only fetch if any vendor ID exists
+            if (!empty($vendor_ids)) {
+                $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors($vendor_ids);
+            } else {
+                $data['vehiclevendorslist'] = [];
+            }
         } else {
-            // Other user types see nothing
             $data['vehiclevendorslist'] = [];
         }
 
         $this->template->template_render('vehiclevendors_management', $data);
     }
+
 
 
 

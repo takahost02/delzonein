@@ -20,12 +20,14 @@ class Vehiclevendors extends CI_Controller
         $user_type = $session_data['user_type'] ?? null;
         $user_id   = $session_data['u_id'] ?? null;
 
+        $vendor_ids = [];
+
         if ($user_type === 'admin') {
             // Admin sees all vehicle vendors
-            $driver_ids = [$user_id];
+            $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors();
         } elseif ($user_type === 'vendor') {
             // Vendor sees only their own vendor record
-            $data['vehiclevendorslist'] = $this->vehiclevendors_model->getall_vehiclevendors([$user_id]);
+            $vendor_ids = [$user_id];
         } elseif ($user_type === 'driver') {
             // Driver sees vendors related to their trips
 
@@ -34,8 +36,6 @@ class Vehiclevendors extends CI_Controller
             $this->db->from('trips');
             $this->db->where('t_driver', $user_id);
             $vehicle_ids = array_column($this->db->get()->result_array(), 't_vehicle');
-
-            $vendor_ids = [];
 
             if (!empty($vehicle_ids)) {
                 // Step 2: Find vendors of those vehicles

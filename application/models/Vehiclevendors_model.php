@@ -39,10 +39,19 @@ class Vehiclevendors_model extends CI_Model
     }
 
 
-    public function getall_vehiclevendors()
+    public function getall_vehiclevendors($vendor_ids = [])
     {
-        return $this->db->select('*')->from('vehicle_vendors')->order_by('vn_id', 'desc')->get()->result_array();
+        $this->db->select('*');
+        $this->db->from('vehicle_vendors');
+
+        if (!empty($vendor_ids)) {
+            $this->db->where_in('vn_id', $vendor_ids); // assuming 'vn_id' is the vendor ID column
+        }
+
+        $this->db->order_by('vn_id', 'desc');
+        return $this->db->get()->result_array();
     }
+
 
     public function getall_activevehiclevendors()
     {

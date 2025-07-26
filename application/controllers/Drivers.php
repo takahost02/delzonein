@@ -89,7 +89,9 @@ class Drivers extends CI_Controller
 					'lr_trips_list' => 1,
 					'lr_vehiclevendors' => 1,
 					'lr_dashboard' => 1,
-					'lr_role' => 1
+					'lr_role' => 1,
+					'lr_vech_availablity' => 1
+					
 				);
 				$this->db->insert('login_roles', $role_data);
 			}
